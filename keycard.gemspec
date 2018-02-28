@@ -8,8 +8,8 @@ require "keycard/version"
 Gem::Specification.new do |spec|
   spec.name          = "keycard"
   spec.version       = Keycard::VERSION
-  spec.authors       = ["Noah Botimer"]
-  spec.email         = ["botimer@umich.edu"]
+  spec.authors       = ["Noah Botimer", "Aaron Elkiss"]
+  spec.email         = ["botimer@umich.edu", "aelkiss@umich.edu"]
 
   spec.summary = <<~SUMMARY
     Keycard provides authentication support and user/request information,
@@ -32,6 +32,9 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+
+  spec.add_dependency "mysql2"
+  spec.add_dependency "sequel"
 
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "coveralls", "~> 0.8"
