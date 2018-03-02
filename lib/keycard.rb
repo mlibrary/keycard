@@ -5,8 +5,4 @@ require "sequel"
 
 # All of the Keycard components are contained within this top-level module.
 module Keycard
-  def self.database
-    Sequel.connect(SOMEWHERE_FIXME)
-  end
-  # Your code goes here...
 end
