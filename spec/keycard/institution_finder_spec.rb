@@ -14,7 +14,8 @@ RSpec.describe Keycard::InstitutionFinder, DB: true do
       @unique_id ||= 0
       @unique_id += 1
       range = IPAddr.new(network).to_range
-      Keycard::DB[:aa_network].insert([@unique_id,nil,network,range.first.to_i,range.last.to_i,access.to_s,nil,inst,Time.now,'test','f'])
+      Keycard::DB[:aa_network].insert([@unique_id, nil, network, range.first.to_i, range.last.to_i,
+                                       access.to_s, nil, inst, Time.now.utc, 'test', 'f'])
     end
 
     before(:each) do
