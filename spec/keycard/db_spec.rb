@@ -6,6 +6,7 @@
 # group has to do a lot of fiddling to both verify the behavior and cooperate
 # with the other tests.
 
+require 'sequel_helper'
 require 'yaml'
 
 RSpec.describe Keycard::DB do
