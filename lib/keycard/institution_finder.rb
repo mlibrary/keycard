@@ -20,7 +20,7 @@ module Keycard
             AND dlpsDeleted = 'f' )
     SQL
 
-    def initialize(db:)
+    def initialize(db: Keycard::DB.db)
       @db = db
       @stmt = @db[INST_QUERY, *[:$client_ip] * 4].prepare(:select, :unused)
     end
@@ -31,7 +31,7 @@ module Keycard
       insts = insts_for_ip(numeric_ip)
 
       if !insts.empty?
-        { 'dlpsInstitutionIds' => insts }
+        { 'dlpsInstitutionId' => insts }
       else
         {}
       end
