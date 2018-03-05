@@ -3,42 +3,38 @@
 require "keycard/institution_finder"
 require "sequel_helper"
 require "ipaddr"
-require "pry"
 
-RSpec.describe Keycard::InstitutionFinder do
+RSpec.describe Keycard::InstitutionFinder, DB: true do
   subject { described_class.new }
 
   describe "#attributes_for" do
     let(:request) { double(:request) }
 
-    def add_inst_network(db, inst:, network:, access:)
+    def add_inst_network(inst:, network:, access:)
       @unique_id ||= 0
       @unique_id += 1
       range = IPAddr.new(network).to_range
-      db[:aa_network].insert([@unique_id,nil,network,range.first.to_i,range.last.to_i,access.to_s,nil,inst,Time.now,'test','f'])
-    end
-
-    before(:all) do
-      @db = test_database
-
-      add_inst_network(@db, inst: 1, network: '10.0.0.0/16', access: :allow)
-      add_inst_network(@db, inst: 1, network: '10.0.2.0/24', access: :deny)
-
-      # range in two institutions
-      add_inst_network(@db, inst: 2, network: '10.0.1.0/24', access: :allow)
-
-      # denied from one, allowed to another
-      add_inst_network(@db, inst: 1, network: '10.0.3.0/24', access: :deny)
-      add_inst_network(@db, inst: 2, network: '10.0.3.0/24', access: :allow)
+      Keycard::DB[:aa_network].insert([@unique_id, nil, network, range.first.to_i, range.last.to_i,
+                                       access.to_s, nil, inst, Time.now.utc, 'test', 'f'])
     end
 
     before(:each) do
+      add_inst_network(inst: 1, network: '10.0.0.0/16', access: :allow)
+      add_inst_network(inst: 1, network: '10.0.2.0/24', access: :deny)
+
+      # range in two institutions
+      add_inst_network(inst: 2, network: '10.0.1.0/24', access: :allow)
+
+      # denied from one, allowed to another
+      add_inst_network(inst: 1, network: '10.0.3.0/24', access: :deny)
+      add_inst_network(inst: 2, network: '10.0.3.0/24', access: :allow)
+
       allow(request).to receive(:get_header)
         .with('X-Forwarded-For')
         .and_return(client_ip)
     end
 
-    subject { described_class.new(@db).attributes_for(request) }
+    subject { described_class.new(db: Keycard::DB.db).attributes_for(request) }
 
     context "with an ip with a single institution" do
       let(:client_ip) { "10.0.0.1" }

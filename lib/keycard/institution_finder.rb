@@ -20,7 +20,7 @@ module Keycard
             AND dlpsDeleted = 'f' )
     SQL
 
-    def initialize(db)
+    def initialize(db:)
       @db = db
       @stmt = @db[INST_QUERY, *[:$client_ip] * 4].prepare(:select, :unused)
     end

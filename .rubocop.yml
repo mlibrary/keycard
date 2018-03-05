@@ -19,7 +19,7 @@ Layout/MultilineMethodDefinitionBraceLayout:
   EnforcedStyle: same_line
 
 Metrics/LineLength:
-  Max: 100
+  Max: 110
 
 Metrics/BlockLength:
   Exclude:

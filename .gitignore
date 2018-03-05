@@ -11,3 +11,8 @@ Gemfile.lock
 
 # rspec failure tracking
 .rspec_status
+
+# Keycard database files
+/db/*.sqlite
+/db/keycard.log
+/db/keycard.yml
