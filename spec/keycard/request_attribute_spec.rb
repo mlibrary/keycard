@@ -3,10 +3,6 @@
 require "keycard/request_attributes"
 
 module Keycard
-  class FakeInstFinder
-    def attributes_for(request); end
-  end
-
   RSpec.describe RequestAttributes do
     let(:request) { double(:request) }
     let(:attributes) { {} }
