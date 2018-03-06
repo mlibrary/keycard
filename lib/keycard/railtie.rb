@@ -97,9 +97,14 @@ module Keycard
       end
     end
 
+    def rake_files
+      base = Pathname(__dir__) + '../tasks/'
+      [base + 'migrate.rake']
+    end
+
     rake_tasks do
       Railtie.under_rake!
-      load "tasks/migrate.rake"
+      rake_files.each { |file| load file }
     end
   end
 end
