@@ -16,3 +16,5 @@ Gemfile.lock
 /db/*.sqlite
 /db/keycard.log
 /db/keycard.yml
+
+keycard*.gem
