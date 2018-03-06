@@ -9,3 +9,5 @@ end
 
 require "keycard/db"
 require "keycard/railtie" if defined?(Rails)
+require "keycard/request_attributes"
+require "keycard/institution_finder"
