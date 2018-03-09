@@ -26,7 +26,7 @@ module Keycard
     end
 
     def attributes_for(request)
-      return {} unless (numeric_ip = numeric_ip(client_ip(request)))
+      return {} unless (numeric_ip = numeric_ip(request.remote_ip))
 
       insts = insts_for_ip(numeric_ip)
 
@@ -53,10 +53,6 @@ module Keycard
       rescue IPAddr::InvalidAddressError
         nil
       end
-    end
-
-    def client_ip(request)
-      request.get_header('X-Forwarded-For')
     end
   end
 end
