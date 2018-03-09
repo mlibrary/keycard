@@ -82,14 +82,7 @@ module Keycard
       Railtie.after_blocks.each do |block|
         block.call(config.to_h)
       end
-    end
 
-    # This runs before any block registered under a `config.to_prepare`, which
-    # could be in plugins or initializers that want to use a fully configured
-    # Keycard instance. The `to_prepare` hook is run once at the start of a
-    # production instance and for every request in development (unless caching
-    # is turned on so there is no reloading).
-    initializer "keycard.ready", after: :finisher_hook do
       Keycard::DB.initialize! unless Railtie.under_rake?
 
       Railtie.ready_blocks.each do |block|
