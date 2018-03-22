@@ -83,8 +83,10 @@ module Keycard
       # This will connect with the current config if not already conencted.
       def migrate!
         connect! unless connected?
-        Sequel.extension :migration
-        Sequel::Migrator.run(db, File.join(__dir__, '../../db/migrations'), table: schema_table)
+        unless config.readonly
+          Sequel.extension :migration
+          Sequel::Migrator.run(db, File.join(__dir__, '../../db/migrations'), table: schema_table)
+        end
       end
 
       def schema_table
@@ -134,7 +136,8 @@ module Keycard
 
       def config
         @config ||= OpenStruct.new(
-          url: ENV['KEYCARD_DATABASE_URL'] || ENV['DATABASE_URL']
+          url: ENV['KEYCARD_DATABASE_URL'] || ENV['DATABASE_URL'],
+          readonly: false
         )
       end
 
