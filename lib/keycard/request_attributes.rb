@@ -5,9 +5,10 @@ module Keycard
   # complete set of things that determine the user's #identity), given a Rack
   # request.
   class RequestAttributes
-    def initialize(request, finder: InstitutionFinder.new)
-      @finder = finder
-      @request = request
+    def initialize(request, resolver: Keycard.resolver_class.new, finder: InstitutionFinder.new)
+      @resolver = resolver
+      @finder   = finder
+      @request  = request
     end
 
     def [](attr)
@@ -15,12 +16,13 @@ module Keycard
     end
 
     def all
-      finder.attributes_for(request)
+      resolver.attributes_for(request).merge(finder.attributes_for(request))
     end
 
     private
 
     attr_reader :finder
+    attr_reader :resolver
     attr_reader :request
   end
 end
