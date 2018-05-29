@@ -26,7 +26,7 @@ module Keycard
     end
 
     def attributes_for(request)
-      return {} unless (numeric_ip = numeric_ip(request.remote_ip))
+      return {} unless (numeric_ip = numeric_ip(request.client_ip))
 
       insts = insts_for_ip(numeric_ip)
 
