@@ -2,15 +2,14 @@
 
 require "keycard/version"
 require "sequel"
+require "ostruct"
 
 # All of the Keycard components are contained within this top-level module.
 module Keycard
-  def self.resolver_class
-    @resolver_class ||= ClientResolver
-  end
-
-  def self.resolver_class=(factory)
-    @resolver_class = factory
+  def self.config
+    @config ||= OpenStruct.new(
+      access: :direct
+    )
   end
 end
 
@@ -18,5 +17,5 @@ require "keycard/db"
 require "keycard/railtie" if defined?(Rails)
 require "keycard/request_attributes"
 require "keycard/institution_finder"
-require "keycard/client_resolver"
-require "keycard/proxied_resolver"
+require "keycard/direct_request"
+require "keycard/proxied_request"
