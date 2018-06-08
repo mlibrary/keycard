@@ -68,7 +68,7 @@ module Keycard
       unless config.url
         case Rails.env
         when "development"
-          config[:opts] = { adapter: 'sqlite', database: "db/keycard-development.sqlite3" }
+          config[:opts] = { adapter: 'sqlite', database: "db/keycard_development.sqlite3" }
         when "test"
           config[:opts] = { adapter: 'sqlite' }
         else 
