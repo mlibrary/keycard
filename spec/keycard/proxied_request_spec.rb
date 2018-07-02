@@ -47,6 +47,24 @@ RSpec.describe Keycard::ProxiedRequest do
     end
   end
 
+#  context "with headers via shibboleth" do
+#    let(:base) do
+#      double('base request', env: {
+#        'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => 'someuser@default.invalid',
+#        'HTTP_X_SHIB_EDUPERSONSCOPEDAFFILIATION' => 'member@default.invalid;staff@default.invalid',
+#        'HTTP_X_SHIB_DISPLAYNAME' => 'Aardvark Jones',
+#        'HTTP_X_SHIB_MAIL' => 'someuser@mail.default.invalid',
+#        'HTTP_X_SHIB_PERSISTENT_ID' => 'https://idp.default.invalid/shib/idp!https://sp.default.invalid/shib/sp!asfgkjhlk',
+#        'HTTP_X_SHIB_AUTHENTICATION_METHOD' => 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
+#        'HTTP_X_SHIB_AUTHNCONTEXT_CLASS' => 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
+#        'HTTP_X_SHIB_IDENTITY_PROVIDER' => 'https://idp.default.invalid/shib/idp'
+#       })
+#    end
+#
+#    let(:request) { described_class.new(base) }
+#
+#  end
+
   describe "#for" do
     let(:base)    { double('base request', env: {}) }
     let(:request) { described_class.for(base) }

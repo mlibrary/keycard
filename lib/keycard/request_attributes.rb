@@ -6,9 +6,8 @@ module Keycard
   # request.
   class RequestAttributes
     def initialize(request, finder: InstitutionFinder.new, request_factory: default_factory)
-      @request  = request
+      @request  = request_factory.for(request)
       @finder   = finder
-      @request_factory = request_factory
     end
 
     def [](attr)
@@ -19,14 +18,20 @@ module Keycard
       user_attributes.merge(finder.attributes_for(request))
     end
 
+    def identity
+      all
+    end
+
+    def supplemental
+#      require "pry"
+#      binding.pry
+      all.select { |k,v| Keycard.config.supplemental_attributes.include?(k) }
+    end
+
     private
 
     def user_attributes
       { username: request.username }
-    end
-
-    def request
-      request_factory.for(@request)
     end
 
     def default_factory
@@ -44,6 +49,6 @@ module Keycard
     end
 
     attr_reader :finder
-    attr_reader :request_factory
+    attr_reader :request
   end
 end

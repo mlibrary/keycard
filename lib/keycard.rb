@@ -8,7 +8,9 @@ require "ostruct"
 module Keycard
   def self.config
     @config ||= OpenStruct.new(
-      access: :direct
+      access: :direct,
+      identity_attributes: [ 'username', 'dlpsInstitutionId' ],
+      supplemental_attributes: [ ]
     )
   end
 end
