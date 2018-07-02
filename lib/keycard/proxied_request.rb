@@ -13,6 +13,13 @@ module Keycard
       new(request)
     end
 
+    def attributes
+      {
+        username: username,
+        client_ip: client_ip,
+      }
+    end
+
     def username
       env['HTTP_X_REMOTE_USER'] || ''
     end

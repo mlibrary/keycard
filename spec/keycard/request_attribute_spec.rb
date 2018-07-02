@@ -10,7 +10,8 @@ module Keycard
     let(:inst_attributes) { {} }
     let(:finder)          { double(:finder, attributes_for: inst_attributes) }
 
-    let(:request)            { double(:request, username: 'user', client_ip: '10.0.0.1') }
+    let(:user_attributes)    { { username: 'user' } }
+    let(:request)            { double(:request, attributes: user_attributes, client_ip: '10.0.0.1' ) }
     let(:factory)            { double('request factory', for: request) }
     let(:request_attributes) { described_class.new(request, finder: finder, request_factory: factory) }
 
@@ -41,12 +42,12 @@ module Keycard
     end
 
     describe "#identity" do
-      let(:user_attributes) { { username: 'user' } }
+      let(:user_attributes) { { username: 'user', bogus: 'junk' } }
       let(:inst_attributes) { { baz: 'quux' } }
       let(:attributes)      { user_attributes.merge(inst_attributes) }
 
       it "returns the identity attributes" do
-        expect(request_attributes.identity).to eq attributes
+        expect(request_attributes.identity).to eq({ username: 'user' })
       end
     end
 
@@ -93,7 +94,7 @@ module Keycard
                  'HTTP_X_FORWARDED_FOR' => '10.0.0.1', 'HTTP_X_REMOTE_USER' => 'user'
                })
       end
-      let(:request) { double('request', username: 'user', client_ip: '10.0.0.1') }
+      let(:request) { double('request', attributes: { username: 'user' }, client_ip: '10.0.0.1') }
 
       it "uses ProxiedRequest" do
         expect(ProxiedRequest).to receive(:for).with(base).and_return(request).at_least(:once)
@@ -116,7 +117,7 @@ module Keycard
                  'REMOTE_ADDR' => '10.0.0.1', 'REMOTE_USER' => 'user'
                })
       end
-      let(:request) { double('request', username: 'user', client_ip: '10.0.0.1') }
+      let(:request) { double('request', attributes: { username: 'user', }, client_ip: '10.0.0.1') }
 
       it "uses DirectRequest" do
         expect(DirectRequest).to receive(:for).with(base).and_return(request).at_least(:once)
@@ -139,7 +140,7 @@ module Keycard
                  'REMOTE_ADDR' => '10.0.0.1', 'REMOTE_USER' => 'user'
                })
       end
-      let(:request) { double('request', username: 'user', client_ip: '10.0.0.1') }
+      let(:request) { double('request', attributes: { username: 'user', }, client_ip: '10.0.0.1') }
 
       it "uses DirectRequest" do
         expect(DirectRequest).to receive(:for).with(base).and_return(request).at_least(:once)

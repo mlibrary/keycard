@@ -19,6 +19,10 @@ RSpec.describe Keycard::ProxiedRequest do
     it "extracts the client IP address from HTTP_X_FORWARDED_FOR" do
       expect(request.client_ip).to eq '10.0.0.1'
     end
+
+    it "gives a hash of all of the usable attributes" do
+      expect(request.attributes).to eq({ username: 'user', client_ip: '10.0.0.1' })
+    end
   end
 
   context "with no forwarded headers" do
