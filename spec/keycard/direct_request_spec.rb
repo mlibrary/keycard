@@ -15,6 +15,10 @@ RSpec.describe Keycard::DirectRequest do
     expect(request.client_ip).to eq '10.0.0.1'
   end
 
+  it "gives a hash of all of the usable attributes" do
+    expect(request.attributes).to eq({ username: 'user', client_ip: '10.0.0.1' })
+  end
+
   context "with multiple remote addresses" do
     let(:addr) { '10.0.0.2, 10.0.0.1' }
 

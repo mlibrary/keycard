@@ -15,24 +15,18 @@ module Keycard
     end
 
     def all
-      user_attributes.merge(finder.attributes_for(request))
+      request.attributes.merge(finder.attributes_for(request))
     end
 
     def identity
-      all
+      all.select { |k,v| Keycard.config.identity_attributes.include?(k.to_s) }
     end
 
     def supplemental
-#      require "pry"
-#      binding.pry
-      all.select { |k,v| Keycard.config.supplemental_attributes.include?(k) }
+      all.select { |k,v| Keycard.config.supplemental_attributes.include?(k.to_s) }
     end
 
     private
-
-    def user_attributes
-      { username: request.username }
-    end
 
     def default_factory
       access = Keycard.config.access.to_sym
