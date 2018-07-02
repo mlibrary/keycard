@@ -40,6 +40,48 @@ module Keycard
       end
     end
 
+    describe "#identity" do
+      let(:user_attributes) { { username: 'user' } }
+      let(:inst_attributes) { { baz: 'quux' } }
+      let(:attributes)      { user_attributes.merge(inst_attributes) }
+
+      it "returns the identity attributes" do
+        expect(request_attributes.identity).to eq attributes
+      end
+    end
+
+    describe "#supplemental" do
+
+      context "with the default supplemental attributes" do
+        let(:user_attributes) { { username: 'user' } }
+        let(:inst_attributes) { { baz: 'quux' } }
+        let(:attributes)      { { }}
+
+        xit "returns the supplemental attributes" do
+          expect(request_attributes.supplemental).to eq attributes
+        end
+      end
+
+      context "when Keycard is configured to deliver displayName as a supplemental attribute" do
+        let(:user_attributes) { { username: 'user', aardvarkName: 'Aardvark Jones' } }
+        let(:inst_attributes) { { baz: 'quux' } }
+        let(:attributes)      { { aardvarkName: 'Aardvark Jones' }}
+
+        before do
+          @supplemental = Keycard.config.supplemental_attributes
+          Keycard.config.supplemental_attributes = ['aardvarkName']
+        end
+
+        after do
+          Keycard.config.supplemental_attributes = @supplemental
+        end
+
+        xit "returns the supplemental attributes" do
+          expect(request_attributes.supplemental).to eq attributes
+        end
+      end
+    end
+
     context "when Keycard is configured for proxied access" do
       before do
         @access = Keycard.config.access
