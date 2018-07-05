@@ -9,7 +9,7 @@ module Keycard
   def self.config
     @config ||= OpenStruct.new(
       access: :direct,
-      identity_attributes: [ 'username', 'dlpsInstitutionId' ],
+      identity_attributes: [ 'user_pid', 'user_eid', 'dlpsInstitutionId' ],
       supplemental_attributes: [ ]
     )
   end
@@ -17,7 +17,5 @@ end
 
 require "keycard/db"
 require "keycard/railtie" if defined?(Rails)
-require "keycard/request_attributes"
 require "keycard/institution_finder"
-require "keycard/direct_request"
-require "keycard/proxied_request"
+require "keycard/request"
