@@ -34,15 +34,15 @@ RSpec.describe Keycard::Request::CosignAttributes do
     let(:attributes) { described_class.new(request) }
 
     it "the user_pid is empty" do
-      expect(attributes.user_pid).to eq ''
+      expect(attributes.user_pid).to be_nil
     end
 
     it "the user_eid is empty" do
-      expect(attributes.user_eid).to eq ''
+      expect(attributes.user_eid).to be_nil
     end
 
-    it "the client_ip is empty" do
-      expect(attributes.client_ip).to eq ''
+    it "the client_ip is empty (though this would be a proxy config error)" do
+      expect(attributes.client_ip).to be_nil
     end
   end
 

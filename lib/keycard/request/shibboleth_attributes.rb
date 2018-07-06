@@ -11,40 +11,41 @@ module Keycard
     # requests, and the user_pid, for requests from authenticated users.
     class ShibbolethAttributes < Attributes
       def base
-        super.merge(shib_attributes)
+        {
+          user_pid:  user_pid,
+          user_eid:  user_eid,
+          client_ip: client_ip
+        }
       end
 
       def user_pid
-        getenv('HTTP_X_SHIB_PERSISTENT_ID')
+        get('HTTP_X_SHIB_PERSISTENT_ID')
       end
 
       def user_eid
-        getenv('HTTP_X_SHIB_EDUPERSONPRINCIPALNAME')
+        get('HTTP_X_SHIB_EDUPERSONPRINCIPALNAME')
       end
 
       def client_ip
-        getenv('HTTP_X_FORWARDED_FOR').split(',').first || ''
+        safe('HTTP_X_FORWARDED_FOR').split(',').first
       end
 
       def display_name
-        getenv('HTTP_X_SHIB_DISPLAYNAME')
+        get('HTTP_X_SHIB_DISPLAYNAME')
       end
 
       def scoped_affiliation
-        getenv('HTTP_X_SHIB_EDUPERSONSCOPEDAFFILIATION').split(';')
+        safe('HTTP_X_SHIB_EDUPERSONSCOPEDAFFILIATION').split(';')
       end
 
       private
 
-      def getenv(key)
-        request.env[key] || ''
+      def get(key)
+        request.env[key]
       end
 
-      def shib_attributes
-        {
-          displayName: display_name,
-          eduPersonScopedAffiliation: scoped_affiliation
-        }
+      def safe(key)
+        get(key) || ''
       end
     end
   end

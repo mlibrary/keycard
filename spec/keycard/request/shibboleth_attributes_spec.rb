@@ -30,11 +30,11 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
     end
 
     describe '#all' do
-      it "includes displayName" do
+      xit "includes displayName" do
         expect(attributes[:displayName]).to eq 'Aardvark Jones'
       end
 
-      it "includes displayName" do
+      xit "includes displayName" do
         expect(attributes[:eduPersonScopedAffiliation]).to contain_exactly(
           'member@default.invalid', 'staff@default.invalid'
         )
@@ -47,15 +47,15 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
     let(:attributes) { described_class.new(request) }
 
     it "the user_pid is empty" do
-      expect(attributes.user_pid).to eq ''
+      expect(attributes.user_pid).to be_nil
     end
 
     it "the user_eid is empty" do
-      expect(attributes.user_eid).to eq ''
+      expect(attributes.user_eid).to be_nil
     end
 
     it "the client_ip is empty" do
-      expect(attributes.client_ip).to eq ''
+      expect(attributes.client_ip).to be_nil
     end
   end
 

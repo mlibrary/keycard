@@ -13,6 +13,8 @@ module Keycard
     # from the request headers and environment, and a set of attribute finders
     # may be supplied to examine the base set and add additional attributes.
     class Attributes
+      IDENTITY_ATTRS = %i[user_pid user_eid]
+
       def initialize(request, finders: [])
         @request = request
         @finders = finders
@@ -53,15 +55,10 @@ module Keycard
 
       # The set of base attributes for this request.
       #
-      # This attribute should always include the user_pid, user_eid, and
-      # client_ip. Subclasses should implement those three methods and merge
-      # into super if overriding this method.
+      # Subclasses should implement user_pid, user_eid, and client_ip
+      # and include them in the hash under those keys.
       def base
-        {
-          user_pid:  user_pid,
-          user_eid:  user_eid,
-          client_ip: client_ip
-        }
+        {}
       end
 
       def [](attr)
@@ -79,11 +76,15 @@ module Keycard
       end
 
       def identity
-        all.select { |k,v| Keycard.config.identity_attributes.include?(k.to_s) }
+        all.select { |k,v| identity_keys.include?(k.to_sym) }
       end
 
       def supplemental
-        all.select { |k,v| Keycard.config.supplemental_attributes.include?(k.to_s) }
+        all.reject { |k,v| identity_keys.include?(k.to_sym) }
+      end
+
+      def identity_keys
+        @identity_keys ||= IDENTITY_ATTRS + (finders.map { |finder| finder.identity_keys }.flatten)
       end
 
       private

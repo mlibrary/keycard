@@ -6,7 +6,9 @@ require "keycard/request/attributes"
 module Keycard::Request
   RSpec.describe Attributes do
     let(:inst_attributes) { {} }
-    let(:finder)          { double(:finder, attributes_for: inst_attributes) }
+    let(:finder) do
+      double(:finder, attributes_for: inst_attributes, identity_keys: [:inst_attr])
+    end
 
     let(:user_attributes)    { { username: 'user' } }
     let(:request)            { double(:request, attributes: user_attributes, client_ip: '10.0.0.1' ) }
@@ -16,28 +18,39 @@ module Keycard::Request
       expect(request_attributes).not_to be(nil)
     end
 
-    it "does not include a user_pid" do
+    it "lists combines its identity keys with those of its finders" do
+      expect(request_attributes.identity_keys).to contain_exactly(:user_pid, :user_eid, :inst_attr)
+    end
+
+    it "does not give a value for user_pid" do
       expect(request_attributes.user_pid).to be nil
     end
 
-    it "does not include a user_eid" do
+    it "does not give a value for user_eid" do
       expect(request_attributes.user_eid).to be nil
     end
 
-    it "does not include a client_ip" do
+    it "does not give a value for client_ip" do
       expect(request_attributes.client_ip).to be nil
     end
 
-    it "gives base attributes with user_pid, user_eid, and client_ip" do
-      base = { user_pid: nil, user_eid: nil, client_ip: nil }
-      expect(request_attributes.base).to eq base
+    it "gives empty base attributes" do
+      expect(request_attributes.base).to eq({})
     end
 
     context "with a finder that returns an attribute" do
-      let(:inst_attributes) { { foo: 'bar' } }
+      let(:inst_attributes) { { inst_attr: 'value', foo: 'bar' } }
 
-      it "can get the value of that attribute" do
-        expect(request_attributes[:foo]).to eq('bar')
+      it "can get the value of an attribute" do
+        expect(request_attributes[:inst_attr]).to eq('value')
+      end
+
+      it "merges identity attributes according to the finder's identity_keys" do
+        expect(request_attributes.identity[:inst_attr]).to eq 'value'
+      end
+
+      it "passes through supplemental attributes" do
+        expect(request_attributes.supplemental[:foo]).to eq('bar')
       end
     end
 
@@ -67,7 +80,7 @@ module Keycard::Request
       context "with the default supplemental attributes" do
         let(:base_attributes) { { user_pid: 'user', client_ip: '10.0.0.1' } }
         let(:inst_attributes) { { baz: 'quux' } }
-        let(:attributes)      { { } }
+        let(:attributes)      { { baz: 'quux' } }
 
         it "returns the supplemental attributes" do
           expect(request_attributes.supplemental).to eq attributes
@@ -77,7 +90,7 @@ module Keycard::Request
       context "when Keycard is configured to deliver displayName as a supplemental attribute" do
         let(:base_attributes) { { user_pid: 'user', aardvarkName: 'Aardvark Jones' } }
         let(:inst_attributes) { { baz: 'quux' } }
-        let(:attributes)      { { aardvarkName: 'Aardvark Jones' }}
+        let(:attributes)      { { aardvarkName: 'Aardvark Jones', baz: 'quux' }}
 
         before do
           @supplemental = Keycard.config.supplemental_attributes

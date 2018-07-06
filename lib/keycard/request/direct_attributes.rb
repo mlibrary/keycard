@@ -6,8 +6,16 @@ module Keycard
     # serve HTTP requests directly or through a proxy that passes trusted
     # values into the application environment to be accessed as usual.
     class DirectAttributes < Attributes
+      def base
+        {
+          user_pid:  user_pid,
+          user_eid:  user_eid,
+          client_ip: client_ip
+        }
+      end
+
       def user_pid
-        request.env['REMOTE_USER'] || ''
+        request.env['REMOTE_USER']
       end
 
       def user_eid
@@ -15,7 +23,7 @@ module Keycard
       end
 
       def client_ip
-        (request.env['REMOTE_ADDR'] || '').split(',').first || ''
+        (request.env['REMOTE_ADDR'] || '').split(',').first
       end
     end
   end
