@@ -12,30 +12,75 @@ module Keycard
     class ShibbolethAttributes < Attributes
       def base
         {
-          user_pid:  user_pid,
-          user_eid:  user_eid,
-          client_ip: client_ip
+          user_pid:     user_pid,
+          user_eid:     user_eid,
+          client_ip:    client_ip,
+          email:        email,
+          display_name: display_name,
+          affiliation:  affiliation,
+          authn_method: authn_context,
+          provider:     provider,
+        }
+      end
+
+      def verbatim
+        {
+          persistentNameID:           persistent_id,
+          eduPersonPrincipalName:     principal_name,
+          eduPersonScopedAffiliation: affiliation,
+          displayName:                display_name,
+          mail:                       email,
+          authnContextClassRef:       authn_context,
+          authenticationMethod:       authn_method,
         }
       end
 
       def user_pid
-        get('HTTP_X_SHIB_PERSISTENT_ID')
+        persistent_id
       end
 
       def user_eid
-        get('HTTP_X_SHIB_EDUPERSONPRINCIPALNAME')
+        principal_name
       end
 
       def client_ip
         safe('HTTP_X_FORWARDED_FOR').split(',').first
       end
 
-      def display_name
-        get('HTTP_X_SHIB_DISPLAYNAME')
+      def persistent_id
+        get 'HTTP_X_SHIB_PERSISTENT_ID'
       end
 
-      def scoped_affiliation
+      def principal_name
+        get 'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME'
+      end
+
+      def display_name
+        get 'HTTP_X_SHIB_DISPLAYNAME'
+      end
+
+      def email
+        get 'HTTP_X_SHIB_MAIL'
+      end
+
+      def affiliation
         safe('HTTP_X_SHIB_EDUPERSONSCOPEDAFFILIATION').split(';')
+      end
+
+      def authn_method
+        get 'HTTP_X_SHIB_AUTHENTICATION_METHOD'
+      end
+
+      def authn_context
+        get 'HTTP_X_SHIB_AUTHNCONTEXT_CLASS'
+      end
+
+      def provider
+        get 'HTTP_X_SHIB_IDENTITY_PROVIDER'
+      end
+
+      def identity_keys
+        %i[user_pid user_eid affiliation]
       end
 
       private
