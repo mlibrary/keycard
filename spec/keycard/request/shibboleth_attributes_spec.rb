@@ -13,7 +13,8 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
         'HTTP_X_SHIB_PERSISTENT_ID' => 'https://idp.default.invalid/shib/idp!https://sp.default.invalid/shib/sp!asfgkjhlk',
         'HTTP_X_SHIB_AUTHENTICATION_METHOD' => 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
         'HTTP_X_SHIB_AUTHNCONTEXT_CLASS' => 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
-        'HTTP_X_SHIB_IDENTITY_PROVIDER' => 'https://idp.default.invalid/shib/idp'
+        'HTTP_X_SHIB_IDENTITY_PROVIDER' => 'https://idp.default.invalid/shib/idp',
+        'HTTP_X_FORWARDED_FOR' => '10.0.0.1'
        })
     end
 
@@ -29,15 +30,95 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
       expect(attributes.user_eid).to eq 'someuser@default.invalid'
     end
 
+    it "uses the mail for email" do
+      expect(attributes.email).to eq 'someuser@mail.default.invalid'
+    end
+
+    it "uses the displayName for display_name" do
+      expect(attributes.display_name).to eq 'Aardvark Jones'
+    end
+
+    it "uses the eduPersonScopedAffiliation for affiliation" do
+      expect(attributes.affiliation).to eq(['member@default.invalid', 'staff@default.invalid'])
+    end
+
+    it "uses the auth context as method" do
+      expect(attributes.authn_method).to eq 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport'
+    end
+
+    it "uses the identity provider URL as provider" do
+      expect(attributes.provider).to eq 'https://idp.default.invalid/shib/idp'
+    end
+
+    it "uses the identity provider URL as provider" do
+      expect(attributes.client_ip).to eq '10.0.0.1'
+    end
+
     describe '#all' do
-      xit "includes displayName" do
-        expect(attributes[:displayName]).to eq 'Aardvark Jones'
+      it "includes user_pid" do
+        expect(attributes[:user_pid]).not_to be_nil
       end
 
-      xit "includes displayName" do
-        expect(attributes[:eduPersonScopedAffiliation]).to contain_exactly(
-          'member@default.invalid', 'staff@default.invalid'
-        )
+      it "includes user_eid" do
+        expect(attributes[:user_eid]).not_to be_nil
+      end
+
+      it "includes client_ip" do
+        expect(attributes[:client_ip]).not_to be_nil
+      end
+
+      it "includes email" do
+        expect(attributes[:email]).not_to be_nil
+      end
+
+      it "includes display_name" do
+        expect(attributes[:display_name]).not_to be_nil
+      end
+
+      it "includes affiliation" do
+        expect(attributes[:affiliation]).not_to be_nil
+      end
+
+      it "includes authn_method" do
+        expect(attributes[:authn_method]).not_to be_nil
+      end
+
+      it "includes provider" do
+        expect(attributes[:provider]).not_to be_nil
+      end
+    end
+
+    describe '#verbatim' do
+      let(:verbatim) { attributes.verbatim }
+
+      it "includes persistentNameID" do
+        expect(verbatim[:persistentNameID]).not_to be_nil
+      end
+
+      it "includes eduPersonPrincipalName" do
+        expect(verbatim[:eduPersonPrincipalName]).not_to be_nil
+      end
+
+      it "includes eduPersonScopedAffiliation" do
+        expect(verbatim[:eduPersonScopedAffiliation]).not_to be_nil
+      end
+
+      it "includes mail" do
+        expect(verbatim[:mail]).not_to be_nil
+      end
+
+      it "includes authnContextClassRef" do
+        expect(verbatim[:authnContextClassRef]).not_to be_nil
+      end
+
+      it "includes authenticationMethod" do
+        expect(verbatim[:authenticationMethod]).not_to be_nil
+      end
+    end
+
+    describe "#identity" do
+      it "includes only user_pid, user_eid and affiliation" do
+        expect(attributes.identity.keys).to contain_exactly(:user_pid, :user_eid, :affiliation)
       end
     end
   end
