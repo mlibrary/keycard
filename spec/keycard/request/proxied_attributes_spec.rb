@@ -34,15 +34,15 @@ RSpec.describe Keycard::Request::ProxiedAttributes do
     let(:request) { described_class.new(base) }
 
     it "the user_pid is empty" do
-      expect(request.user_pid).to eq ''
+      expect(request.user_pid).to be_nil
     end
 
     it "the user_eid is empty" do
-      expect(request.user_eid).to eq ''
+      expect(request.user_eid).to be_nil
     end
 
     it "the client_ip is empty" do
-      expect(request.client_ip).to eq ''
+      expect(request.client_ip).to be_nil
     end
   end
 

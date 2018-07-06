@@ -10,8 +10,16 @@ module Keycard
     # which, somewhat confusingly, are transposed into HTTP_X_REMOTE_USER and
     # HTTP_X_FORWARDED_FOR once the Rack request is assembled.
     class ProxiedAttributes < Attributes
+      def base
+        {
+          user_pid:  user_pid,
+          user_eid:  user_eid,
+          client_ip: client_ip
+        }
+      end
+
       def user_pid
-        request.env['HTTP_X_REMOTE_USER'] || ''
+        request.env['HTTP_X_REMOTE_USER']
       end
 
       def user_eid
@@ -19,7 +27,7 @@ module Keycard
       end
 
       def client_ip
-        (request.env['HTTP_X_FORWARDED_FOR'] || '').split(',').first || ''
+        (request.env['HTTP_X_FORWARDED_FOR'] || '').split(',').first
       end
     end
   end
