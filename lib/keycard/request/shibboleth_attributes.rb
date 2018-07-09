@@ -12,19 +12,9 @@ module Keycard
     class ShibbolethAttributes < Attributes
       def base
         {
-          user_pid:     user_pid,
-          user_eid:     user_eid,
-          client_ip:    client_ip,
-          email:        email,
-          display_name: display_name,
-          affiliation:  affiliation,
-          authn_method: authn_context,
-          provider:     provider,
-        }
-      end
-
-      def verbatim
-        {
+          user_pid:                   user_pid,
+          user_eid:                   user_eid,
+          client_ip:                  client_ip,
           persistentNameID:           persistent_id,
           eduPersonPrincipalName:     principal_name,
           eduPersonScopedAffiliation: affiliation,
@@ -32,6 +22,7 @@ module Keycard
           mail:                       email,
           authnContextClassRef:       authn_context,
           authenticationMethod:       authn_method,
+          identity_provider:          identity_provider
         }
       end
 
@@ -75,12 +66,12 @@ module Keycard
         get 'HTTP_X_SHIB_AUTHNCONTEXT_CLASS'
       end
 
-      def provider
+      def identity_provider
         get 'HTTP_X_SHIB_IDENTITY_PROVIDER'
       end
 
       def identity_keys
-        %i[user_pid user_eid affiliation]
+        %i[user_pid user_eid eduPersonScopedAffiliation]
       end
 
       private

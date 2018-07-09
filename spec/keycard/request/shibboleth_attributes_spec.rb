@@ -46,11 +46,11 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
       expect(attributes.authn_method).to eq 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport'
     end
 
-    it "uses the identity provider URL as provider" do
-      expect(attributes.provider).to eq 'https://idp.default.invalid/shib/idp'
+    it "uses the identity provider URL as identity_provider" do
+      expect(attributes.identity_provider).to eq 'https://idp.default.invalid/shib/idp'
     end
 
-    it "uses the identity provider URL as provider" do
+    it "uses the forwarded for header as client_ip" do
       expect(attributes.client_ip).to eq '10.0.0.1'
     end
 
@@ -67,58 +67,38 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
         expect(attributes[:client_ip]).not_to be_nil
       end
 
-      it "includes email" do
-        expect(attributes[:email]).not_to be_nil
+      it "includes identity_provider" do
+        expect(attributes[:identity_provider]).not_to be_nil
       end
-
-      it "includes display_name" do
-        expect(attributes[:display_name]).not_to be_nil
-      end
-
-      it "includes affiliation" do
-        expect(attributes[:affiliation]).not_to be_nil
-      end
-
-      it "includes authn_method" do
-        expect(attributes[:authn_method]).not_to be_nil
-      end
-
-      it "includes provider" do
-        expect(attributes[:provider]).not_to be_nil
-      end
-    end
-
-    describe '#verbatim' do
-      let(:verbatim) { attributes.verbatim }
 
       it "includes persistentNameID" do
-        expect(verbatim[:persistentNameID]).not_to be_nil
+        expect(attributes[:persistentNameID]).not_to be_nil
       end
 
       it "includes eduPersonPrincipalName" do
-        expect(verbatim[:eduPersonPrincipalName]).not_to be_nil
+        expect(attributes[:eduPersonPrincipalName]).not_to be_nil
       end
 
       it "includes eduPersonScopedAffiliation" do
-        expect(verbatim[:eduPersonScopedAffiliation]).not_to be_nil
+        expect(attributes[:eduPersonScopedAffiliation]).not_to be_nil
       end
 
       it "includes mail" do
-        expect(verbatim[:mail]).not_to be_nil
+        expect(attributes[:mail]).not_to be_nil
       end
 
       it "includes authnContextClassRef" do
-        expect(verbatim[:authnContextClassRef]).not_to be_nil
+        expect(attributes[:authnContextClassRef]).not_to be_nil
       end
 
       it "includes authenticationMethod" do
-        expect(verbatim[:authenticationMethod]).not_to be_nil
+        expect(attributes[:authenticationMethod]).not_to be_nil
       end
     end
 
     describe "#identity" do
       it "includes only user_pid, user_eid and affiliation" do
-        expect(attributes.identity.keys).to contain_exactly(:user_pid, :user_eid, :affiliation)
+        expect(attributes.identity.keys).to contain_exactly(:user_pid, :user_eid, :eduPersonScopedAffiliation)
       end
     end
   end
