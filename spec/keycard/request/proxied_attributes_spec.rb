@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "keycard/proxied_request"
+require "keycard/request/proxied_attributes"
 
-RSpec.describe Keycard::ProxiedRequest do
+RSpec.describe Keycard::Request::ProxiedAttributes do
   context "with typical forwarded headers" do
     let(:base) do
       double('base request', env: {
@@ -12,12 +12,20 @@ RSpec.describe Keycard::ProxiedRequest do
     end
     let(:request) { described_class.new(base) }
 
-    it "extracts the username from HTTP_X_REMOTE_USER" do
-      expect(request.username).to eq 'user'
+    it "extracts the user_pid from HTTP_X_REMOTE_USER" do
+      expect(request.user_pid).to eq 'user'
+    end
+
+    it "extracts the user_eid from HTTP_X_REMOTE_USER" do
+      expect(request.user_eid).to eq 'user'
     end
 
     it "extracts the client IP address from HTTP_X_FORWARDED_FOR" do
       expect(request.client_ip).to eq '10.0.0.1'
+    end
+
+    it "gives a hash of all of the base attributes" do
+      expect(request.all).to eq(user_pid: 'user', user_eid: 'user', client_ip: '10.0.0.1')
     end
   end
 
@@ -25,12 +33,16 @@ RSpec.describe Keycard::ProxiedRequest do
     let(:base)    { double('base request', env: {}) }
     let(:request) { described_class.new(base) }
 
-    it "the username is empty" do
-      expect(request.username).to eq ''
+    it "the user_pid is empty" do
+      expect(request.user_pid).to be_nil
+    end
+
+    it "the user_eid is empty" do
+      expect(request.user_eid).to be_nil
     end
 
     it "the client_ip is empty" do
-      expect(request.client_ip).to eq ''
+      expect(request.client_ip).to be_nil
     end
   end
 
@@ -44,15 +56,6 @@ RSpec.describe Keycard::ProxiedRequest do
 
     it "extracts the first address" do
       expect(request.client_ip).to eq '10.0.0.2'
-    end
-  end
-
-  describe "#for" do
-    let(:base)    { double('base request', env: {}) }
-    let(:request) { described_class.for(base) }
-
-    it "gives a ProxiedRequest" do
-      expect(request).to be_a Keycard::ProxiedRequest
     end
   end
 end

@@ -5,6 +5,8 @@ require 'ipaddr'
 module Keycard
   # looks up institution ID(s) by IP address
   class InstitutionFinder
+    IDENTITY_ATTRS = %i[dlpsInstitutionId].freeze
+
     INST_QUERY = <<~SQL
         SELECT inst FROM aa_network WHERE
                 ? >= dlpsAddressStart
@@ -25,13 +27,17 @@ module Keycard
       @stmt = @db[INST_QUERY, *[:$client_ip] * 4].prepare(:select, :unused)
     end
 
+    def identity_keys
+      IDENTITY_ATTRS
+    end
+
     def attributes_for(request)
       return {} unless (numeric_ip = numeric_ip(request.client_ip))
 
       insts = insts_for_ip(numeric_ip)
 
       if !insts.empty?
-        { 'dlpsInstitutionId' => insts }
+        { dlpsInstitutionId: insts }
       else
         {}
       end

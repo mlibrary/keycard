@@ -5,6 +5,12 @@ require "sequel_helper"
 require "ipaddr"
 
 RSpec.describe Keycard::InstitutionFinder, DB: true do
+  # Should become a shared example for finders when we add more
+  it "lists its identity keys" do
+    finder = described_class.new
+    expect(finder.identity_keys).to eq [:dlpsInstitutionId]
+  end
+
   describe "#attributes_for" do
     let(:request) { double(:request, client_ip: client_ip) }
 
@@ -34,18 +40,18 @@ RSpec.describe Keycard::InstitutionFinder, DB: true do
       let(:client_ip) { "10.0.0.1" }
 
       it "returns a hash with (only) a dlpsInstitutionId key" do
-        expect(attributes.keys).to contain_exactly('dlpsInstitutionId')
+        expect(attributes.keys).to contain_exactly(:dlpsInstitutionId)
       end
 
       it "returns the correct institution" do
-        expect(attributes['dlpsInstitutionId']).to contain_exactly(1)
+        expect(attributes[:dlpsInstitutionId]).to contain_exactly(1)
       end
     end
 
     context "with an ip with multiple institutions" do
       let(:client_ip) { "10.0.1.1" }
       it "returns the set of institutions" do
-        expect(attributes['dlpsInstitutionId']).to contain_exactly(1, 2)
+        expect(attributes[:dlpsInstitutionId]).to contain_exactly(1, 2)
       end
     end
 
@@ -59,7 +65,7 @@ RSpec.describe Keycard::InstitutionFinder, DB: true do
     context "with an IP address allowed in two insts and denied in one of them" do
       let(:client_ip) { "10.0.3.1" }
       it "returns the institution it wasn't denied from" do
-        expect(attributes['dlpsInstitutionId']).to contain_exactly(2)
+        expect(attributes[:dlpsInstitutionId]).to contain_exactly(2)
       end
     end
 

@@ -71,7 +71,7 @@ module Keycard
           config[:opts] = { adapter: 'sqlite', database: "db/keycard_development.sqlite3" }
         when "test"
           config[:opts] = { adapter: 'sqlite' }
-        else 
+        else
           raise "Keycard::DB.config must be configured"
         end
       end
