@@ -2,6 +2,10 @@
 
 module Keycard
   module Request
+    # Factory to simplify creation of Attributes instances. It binds in a list
+    # of finders and inspects the Keycard.config.access mode to determine which
+    # subclass to use. You can register a factory instance as a service and then
+    # use .for instead of naming concrete classes when processing requests.
     class AttributesFactory
       def initialize(finders: [InstitutionFinder.new])
         @finders = finders

@@ -13,7 +13,7 @@ module Keycard
     # from the request headers and environment, and a set of attribute finders
     # may be supplied to examine the base set and add additional attributes.
     class Attributes
-      IDENTITY_ATTRS = %i[user_pid user_eid]
+      IDENTITY_ATTRS = %i[user_pid user_eid].freeze
 
       def initialize(request, finders: [])
         @request = request
@@ -66,25 +66,25 @@ module Keycard
       end
 
       def all
-        base.merge!(external).delete_if {|k, v| v.nil? || v == '' }
+        base.merge!(external).delete_if { |_k, v| v.nil? || v == '' }
       end
 
       def external
         finders
-          .map        {|finder| finder.attributes_for(self) }
-          .reduce({}) {|hash, attrs| hash.merge!(attrs) }
+          .map        { |finder| finder.attributes_for(self) }
+          .reduce({}) { |hash, attrs| hash.merge!(attrs) }
       end
 
       def identity
-        all.select { |k,v| identity_keys.include?(k.to_sym) }
+        all.select { |k, _v| identity_keys.include?(k.to_sym) }
       end
 
       def supplemental
-        all.reject { |k,v| identity_keys.include?(k.to_sym) }
+        all.reject { |k, _v| identity_keys.include?(k.to_sym) }
       end
 
       def identity_keys
-        @identity_keys ||= IDENTITY_ATTRS + (finders.map { |finder| finder.identity_keys }.flatten)
+        @identity_keys ||= IDENTITY_ATTRS + finders.map(&:identity_keys).flatten
       end
 
       private

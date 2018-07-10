@@ -15,7 +15,7 @@ RSpec.shared_examples "attribute factory" do |mode, klass|
 
     it "uses #{klass}" do
       expect(klass).to receive(:new).with(request, finders: []).and_return(request).at_least(:once)
-      attrs = factory.for(request)
+      factory.for(request)
     end
 
     after do
@@ -31,7 +31,7 @@ module Keycard::Request
       'proxy'         => ProxiedAttributes,
       'cosign'        => CosignAttributes,
       'shibboleth'    => ShibbolethAttributes,
-      '(any unknown)' => DirectAttributes,
+      '(any unknown)' => DirectAttributes
     }
     access.each do |mode, klass|
       include_examples 'attribute factory', mode, klass

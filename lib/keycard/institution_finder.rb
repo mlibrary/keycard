@@ -5,7 +5,7 @@ require 'ipaddr'
 module Keycard
   # looks up institution ID(s) by IP address
   class InstitutionFinder
-    IDENTITY_ATTRS = %i[dlpsInstitutionId]
+    IDENTITY_ATTRS = %i[dlpsInstitutionId].freeze
 
     INST_QUERY = <<~SQL
         SELECT inst FROM aa_network WHERE

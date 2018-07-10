@@ -9,8 +9,8 @@ module Keycard
   def self.config
     @config ||= OpenStruct.new(
       access: :direct,
-      identity_attributes: [ 'user_pid', 'user_eid', 'dlpsInstitutionId' ],
-      supplemental_attributes: [ ]
+      identity_attributes: %w[user_pid user_eid dlpsInstitutionId],
+      supplemental_attributes: []
     )
   end
 end

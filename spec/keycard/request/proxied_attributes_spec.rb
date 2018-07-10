@@ -25,7 +25,7 @@ RSpec.describe Keycard::Request::ProxiedAttributes do
     end
 
     it "gives a hash of all of the base attributes" do
-      expect(request.all).to eq({ user_pid: 'user', user_eid: 'user', client_ip: '10.0.0.1' })
+      expect(request.all).to eq(user_pid: 'user', user_eid: 'user', client_ip: '10.0.0.1')
     end
   end
 
