@@ -75,7 +75,7 @@ class Keycard::Railtie < Rails::Railtie
       end
     end
 
-    Railtie.before_blocks.each do |block|
+    self.class.before_blocks.each do |block|
       block.call(config.to_h)
     end
   end
@@ -83,13 +83,13 @@ class Keycard::Railtie < Rails::Railtie
   # This runs after everything in 'config/initializers' runs.
   initializer "keycard.after_initializers", after: :load_config_initializers do
     config = Keycard::DB.config
-    Railtie.after_blocks.each do |block|
+    self.class.after_blocks.each do |block|
       block.call(config.to_h)
     end
 
-    Keycard::DB.initialize! unless Railtie.under_rake?
+    Keycard::DB.initialize! unless self.class.under_rake?
 
-    Railtie.ready_blocks.each do |block|
+    self.class.ready_blocks.each do |block|
       block.call(Keycard::DB.db)
     end
   end
@@ -100,7 +100,7 @@ class Keycard::Railtie < Rails::Railtie
   end
 
   rake_tasks do
-    Railtie.under_rake!
+    self.class.under_rake!
     rake_files.each { |file| load file }
   end
 end
