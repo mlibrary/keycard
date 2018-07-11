@@ -26,5 +26,11 @@ Metrics/BlockLength:
     - '*.gemspec'
   ExcludedMethods: ['describe', 'context']
 
+Naming/UncommunicativeMethodParamName:
+  AllowedNames: ['db']
+
 Style/StringLiterals:
   Enabled: false
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
