@@ -4,19 +4,24 @@ require "keycard/request/shibboleth_attributes"
 
 RSpec.describe Keycard::Request::ShibbolethAttributes do
   context "with headers via Shibboleth" do
+    # rubocop:disable Metrics/LineLength
     let(:request) do
-      double('request', env: {
-               'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => 'someuser@default.invalid',
-               'HTTP_X_SHIB_EDUPERSONSCOPEDAFFILIATION' => 'member@default.invalid;staff@default.invalid',
-               'HTTP_X_SHIB_DISPLAYNAME' => 'Aardvark Jones',
-               'HTTP_X_SHIB_MAIL' => 'someuser@mail.default.invalid',
-               'HTTP_X_SHIB_PERSISTENT_ID' => 'https://idp.default.invalid/shib/idp!https://sp.default.invalid/shib/sp!asfgkjhlk',
-               'HTTP_X_SHIB_AUTHENTICATION_METHOD' => 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
-               'HTTP_X_SHIB_AUTHNCONTEXT_CLASS' => 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
-               'HTTP_X_SHIB_IDENTITY_PROVIDER' => 'https://idp.default.invalid/shib/idp',
-               'HTTP_X_FORWARDED_FOR' => '10.0.0.1'
-             })
+      double(
+        'request',
+        env: {
+          'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => 'someuser@default.invalid',
+          'HTTP_X_SHIB_EDUPERSONSCOPEDAFFILIATION' => 'member@default.invalid;staff@default.invalid',
+          'HTTP_X_SHIB_DISPLAYNAME' => 'Aardvark Jones',
+          'HTTP_X_SHIB_MAIL' => 'someuser@mail.default.invalid',
+          'HTTP_X_SHIB_PERSISTENT_ID' => 'https://idp.default.invalid/shib/idp!https://sp.default.invalid/shib/sp!asfgkjhlk',
+          'HTTP_X_SHIB_AUTHENTICATION_METHOD' => 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
+          'HTTP_X_SHIB_AUTHNCONTEXT_CLASS' => 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
+          'HTTP_X_SHIB_IDENTITY_PROVIDER' => 'https://idp.default.invalid/shib/idp',
+          'HTTP_X_FORWARDED_FOR' => '10.0.0.1'
+        }
+      )
     end
+    # rubocop:enable Metrics/LineLength
 
     let(:attributes) { described_class.new(request) }
 
@@ -43,7 +48,8 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
     end
 
     it "uses the auth context as method" do
-      expect(attributes.authn_method).to eq 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport'
+      expect(attributes.authn_method)
+        .to eq 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport'
     end
 
     it "uses the identity provider URL as identity_provider" do
