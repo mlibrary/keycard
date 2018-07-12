@@ -36,5 +36,10 @@ module Keycard::Request
     access.each do |mode, klass|
       include_examples 'attribute factory', mode, klass
     end
+
+    it "can be instantiated without an explicit finder list" do
+      factory = described_class.new
+      expect(factory).not_to be_nil
+    end
   end
 end

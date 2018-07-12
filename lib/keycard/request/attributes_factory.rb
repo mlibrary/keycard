@@ -13,7 +13,7 @@ module Keycard::Request
       shibboleth: ShibbolethAttributes
     }.freeze
 
-    def initialize(finders: [InstitutionFinder.new])
+    def initialize(finders: [Keycard::InstitutionFinder.new])
       @finders = finders
     end
 
