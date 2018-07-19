@@ -70,8 +70,6 @@ class Keycard::Railtie < Rails::Railtie
         config[:opts] = { adapter: 'sqlite', database: "db/keycard_development.sqlite3" }
       when "test"
         config[:opts] = { adapter: 'sqlite' }
-      else
-        raise "Keycard::DB.config must be configured"
       end
     end
 
@@ -83,6 +81,7 @@ class Keycard::Railtie < Rails::Railtie
   # This runs after everything in 'config/initializers' runs.
   initializer "keycard.after_initializers", after: :load_config_initializers do
     config = Keycard::DB.config
+    raise "Keycard::DB.config must be configured" unless config.url || config.opts
     self.class.after_blocks.each do |block|
       block.call(config.to_h)
     end
