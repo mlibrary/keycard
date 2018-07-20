@@ -138,4 +138,26 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
       expect(attributes.client_ip).to eq '10.0.0.2'
     end
   end
+
+  context "with a '(null)' header value" do
+    let(:request) do
+      double('request', env: { 'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => '(null)' })
+    end
+    let(:attributes) { described_class.new(request) }
+
+    it "trims the value to nil" do
+      expect(attributes.user_eid).to be_nil
+    end
+  end
+
+  context "with an empty string header value" do
+    let(:request) do
+      double('request', env: { 'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => '' })
+    end
+    let(:attributes) { described_class.new(request) }
+
+    it "trims the value to nil" do
+      expect(attributes.user_eid).to be_nil
+    end
+  end
 end

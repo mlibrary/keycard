@@ -15,7 +15,7 @@ module Keycard::Request
     end
 
     def user_pid
-      request.env['HTTP_X_REMOTE_USER']
+      get 'HTTP_X_REMOTE_USER'
     end
 
     def user_eid
@@ -23,7 +23,7 @@ module Keycard::Request
     end
 
     def client_ip
-      (request.env['HTTP_X_FORWARDED_FOR'] || '').split(',').first
+      safe('HTTP_X_FORWARDED_FOR').split(',').first
     end
   end
 end

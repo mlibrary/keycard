@@ -72,15 +72,5 @@ module Keycard::Request
     def identity_keys
       %i[user_pid user_eid eduPersonScopedAffiliation]
     end
-
-    private
-
-    def get(key)
-      request.env[key]
-    end
-
-    def safe(key)
-      get(key) || ''
-    end
   end
 end

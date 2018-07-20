@@ -88,6 +88,38 @@ module Keycard::Request
 
     private
 
+    # Retrieve the value from the request's environment for a given key.
+    #
+    # This will trim whitespace and yield nil for empty values or those with
+    # the special value of '(null)'. Use {#safe} if you always want a string.
+    #
+    # @return [String|nil] value for the key, filtered and trimmed to nil
+    def get(key)
+      scrub request.env[key]
+    end
+
+    # Retrieve a guaranteed string value from the request's environment for a
+    # given key.
+    #
+    # This has the same behavior as {#get}, except that it will coalesce
+    # missing values to an empty string, convenient if you need to do string
+    # operations like splitting the value.
+    def safe(key)
+      get(key) || ''
+    end
+
+    # Scrub a value to remove whitespace, filter the special '(null)' value,
+    # and translate resulting empty strings to nil.
+    def scrub(value)
+      str = (value || '').strip
+      case str
+      when nil, '(null)', ''
+        nil
+      else
+        str
+      end
+    end
+
     attr_reader :finders
     attr_reader :request
   end
