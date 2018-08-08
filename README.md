@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/mlibrary/keycard.svg?branch=master)](https://travis-ci.org/mlibrary/keycard?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/mlibrary/keycard/badge.svg?branch=master)](https://coveralls.io/github/mlibrary/keycard?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/keycard/badge/?version=latest)](https://keycard.readthedocs.io/en/latest/?badge=latest)
 
 # Keycard
 
