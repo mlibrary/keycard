@@ -1,14 +1,14 @@
 Identity and Authentication
 ===========================
 
-Users can be identified in any number of ways and carry with them various
-attributes that determine the entirety of "who they are". Our typical needs
+Users can be identified in any number of ways and carry with them
+attributes that determine the entirety of "who they are". Typical needs
 include identifying a person by username or email address, and building a
 profile of attributes such as geographical region (as determined by IP address),
 or University status (student, staff, etc.). The identifiers and attributes are
 intrinsic to the user and do not, by themselves, grant any permissions within
 an application. Likewise, these attributes cannot be granted within an
-application, but only inspected.
+application, only inspected.
 
 Authentication Terms
 --------------------
@@ -18,13 +18,30 @@ security, and technology. These definitions give building blocks for the
 discrete combination scenarios that require (or support) different business
 rules.
 
+* **Principal** -- TODO: explain what this is
+
+There are three dimensions to consider. A user may
+have only one status in a given dimension:
+
+* **Identification** -- Anonymous, Unnamed, Named
+* **Affiliation** -- Unaffiliated, Affiliated
+* **Account Status** -- Non-member, Member
+
+These statuses are defined below:
+
+TODO: It's not clear to me why some of these are nouns and some are adjectives.
+      This problem is easier to see when you start adding in all the statuses that
+      were skipped, e.g. unaffiliated, non-member. Some terms appear to belong
+      together as they describe a shared, implied subject. Other terms appear
+      standalone.
+
 * **Anonymous** -- individually indistinguishable from other people except
   circumstantially (e.g., visiting from the same IP address)
 * **Identified** -- a person whose identity has been verified; importantly, the
   identity may not be known to all parties
 * **Unnamed** -- identified, but only opaquely; that is, the person (principal)
   is not revealed to the application, though the affiliation (organizational
-  role) typical is
+  role) is
 * **Named** -- personally identified; that is, a resolvable identifier for the
   person (principal) is revealed, possibly along with name information
 * **Session** -- a period of usage that is considered to be conducted by the
@@ -37,30 +54,29 @@ rules.
 * **Visitor** -- a person with no identification or affiliation whatsoever;
   effectively unrecognized by any means
 * **Guest** -- a person with some identification or affiliation; recognized, but
-  transient, that is, not holding an account of any sort 
+  transient, that is, not holding an account of any sort
 * **Member** -- a person with identification; recognized, holding an account
+* **Non-Member** -- TODO: a person without identification; unrecognized, does not have an account
+  or could they?
 
-As far as classifying users, there are three dimensions to consider. A user may
-have only one status in a given dimension:
+Not all combinations are sensible. For example,
+membership requires some form of identification, so there cannot be an anonymous
+member.
 
-* **Identification** -- Anonymous, Unnamed, Named
-* **Affiliation** -- Unaffiliated, Affiliated
-* **Account Status** -- Nonmember, Member
-
-Not all combinations are sensible for determining business rules. For example,
-membership requires some form of identification, so there can be no anonymous
-members.
-
-To aid consideration of the rules for an application, this table names all of
-the unique combinations, which are further defined below. It does not imply
+This table names all of the unique combinations that can be used by an application,
+which are further defined below. It does not imply
 that all applications should have seven user types, but that each combination
 has unique characteristics that may need to be handled differently. A given
-application may exclude certain types or treat different types the same in many
-ways. For example, an application may completely disregard identification for
+application may exclude certain types or treat different types the same.
+For example, an application may completely disregard identification for
 Guests, treating them all the same.
 
+TODO: This table makes no sense to me at all. What are the headings and where did they come
+      from? What happened to "identified"? I really expected to see the above terms
+      combined together to form the below terms.
+
 .. csv-table::
-   :header: "", "Unaffiliated Nonmember", "Unaffiliated Member", "Affiliated Nonmember", "Affiliated Member"
+   :header: "", "Unaffiliated Non-member", "Unaffiliated Member", "Affiliated Non-member", "Affiliated Member"
    :stub-columns: 1
 
    "Anonymous", "Visitor (Public)", "--", "Unknown Guest", "--"
@@ -91,6 +107,7 @@ stored server-side.
 Visitor (Public)
 ................
 All Visitors are anonymous and should be treated as "any public user".
+TODO: Clarify whether this section is further describing the Visitor section or not.
 
 Guest
 ~~~~~
@@ -112,6 +129,8 @@ identification. All that can be asserted is that the user has some unspecified
 affiliation (or a generic one implying that the person can access
 organizational computing resources).
 
+TODO: Isn't this what affiliated means?
+
 Unnamed Guest
 .............
 A person with specified affiliation and a persistent identifier. The identifier
@@ -124,11 +143,14 @@ not present different identifiers for the same person, but that is outside of
 the control and knowledge of the application. It should be assumed that
 different IDs represent different people.
 
-The affiliation may be multi-valued and is "scoped", meaning that it applies
+The affiliation may be multi-valued and is *scoped*, meaning that it applies
 within a security domain. Common semantics assert that a person has roles like
 member and staff, or member and student, scoped to the entire affiliate
 organization. An example of one scoped affiliation would be
 ``faculty@umich.edu``.
+
+TODO: Explain pid outside of these categories
+TODO: Explain eid outside of these categories
 
 Named Guest
 ...........
@@ -194,3 +216,10 @@ of "named user"; that is, account and display information is maintained, likely
 in order to grant individual permissions and display name information to other
 users.
 
+TODO: The top section seeks to define the terms, and then the bottom section wants
+use those terms to describe some concepts. I think that would be better on separate
+pages. It's also difficult to follow the relationship between the terms defined at
+the top, and their use below. The eid and pid seem like they're the most important
+thing, and as such they're super glossed over. If they're not that important, that
+would be useful to know as well. Basically, what concrete things does keycard do
+here that differs between the different types of users?
