@@ -3,6 +3,8 @@
 /_yardoc/
 /coverage/
 /doc/
+/docs/_build/
+/docs/_yard/
 /pkg/
 /spec/reports/
 /tmp/
