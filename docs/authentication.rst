@@ -1,8 +1,8 @@
 Identity and Authentication
 ===========================
 
-Users can be identified in any number of ways and carry with them various
-attributes that determine the entirety of "who they are". Our typical needs
+Users can be identified in any number of ways and carry with them
+attributes that determine the entirety of "who they are". Typical needs
 include identifying a person by username or email address, and building a
 profile of attributes such as geographical region (as determined by IP address),
 or University status (student, staff, etc.). The identifiers and attributes are
@@ -10,25 +10,42 @@ intrinsic to the user and do not, by themselves, grant any permissions within
 an application. Likewise, these attributes cannot be granted within an
 application, but only inspected.
 
-Authentication Terms
---------------------
+This document gives an overview of authentication terminology and scenarios
+from an application perspective. Not all of these concepts are strictly in the
+domain of Keycard (for example, we mention some typical authorization rules as
+they relate to different user types). This background is presented here to
+establish the environment within which Keycard operates and functionality it
+seeks to support. How to use Keycard in an application is documented elsewhere
+(TODO: complete examples and link API).
+
+Authentication Glossary
+-----------------------
 
 There are many overlapping concepts and terms regarding identity, privacy,
 security, and technology. These definitions give building blocks for the
 discrete combination scenarios that require (or support) different business
 rules.
 
+As far as classifying users, there are three dimensions to consider. A user may
+have only one status in a given dimension:
+
+* **Identification** -- Anonymous, Unnamed, Named
+* **Affiliation** -- Unaffiliated, Affiliated
+* **Account Status** -- Nonmember, Member
+
 * **Anonymous** -- individually indistinguishable from other people except
   circumstantially (e.g., visiting from the same IP address)
 * **Identified** -- a person whose identity has been verified; importantly, the
   identity may not be known to all parties
 * **Unnamed** -- identified, but only opaquely; that is, the person (principal)
-  is not revealed to the application, though the affiliation (organizational
-  role) typical is
+  is not revealed to the application, though the specific affiliation is,
+  usually an organizational role or roles
 * **Named** -- personally identified; that is, a resolvable identifier for the
   person (principal) is revealed, possibly along with name information
 * **Session** -- a period of usage that is considered to be conducted by the
   same person
+* **Principal** -- a person with an organizational account (but not necessarily
+  an application account)
 * **Partner** -- an organization with some agreement with the application
   providers, in order to authenticate its users and offer access on its behalf
 * **Affiliate** -- a person with at least one affiliation relationship with a
@@ -37,15 +54,9 @@ rules.
 * **Visitor** -- a person with no identification or affiliation whatsoever;
   effectively unrecognized by any means
 * **Guest** -- a person with some identification or affiliation; recognized, but
-  transient, that is, not holding an account of any sort 
-* **Member** -- a person with identification; recognized, holding an account
-
-As far as classifying users, there are three dimensions to consider. A user may
-have only one status in a given dimension:
-
-* **Identification** -- Anonymous, Unnamed, Named
-* **Affiliation** -- Unaffiliated, Affiliated
-* **Account Status** -- Nonmember, Member
+  transient, that is, not holding an account of any sort
+* **Member** -- a person with identification; recognized, holding an account;
+  Visitors and Guests are considered non-members
 
 Not all combinations are sensible for determining business rules. For example,
 membership requires some form of identification, so there can be no anonymous
@@ -90,7 +101,9 @@ stored server-side.
 
 Visitor (Public)
 ................
-All Visitors are anonymous and should be treated as "any public user".
+All Visitors are anonymous and should be treated as "any public user". This
+typically means that they have access to a limited set of resources and cannot
+receive any personalization features.
 
 Guest
 ~~~~~
@@ -108,9 +121,10 @@ designation.
 Unknown Guest
 .............
 A user connecting from a recognized affiliate network, but with no
-identification. All that can be asserted is that the user has some unspecified
-affiliation (or a generic one implying that the person can access
-organizational computing resources).
+identification. All that can be asserted is that the user has a generic
+affiliation implying that the person can access organizational computing
+resources. This may be by way of public computers, campus networking,
+or VPN access, as examples.
 
 Unnamed Guest
 .............
@@ -124,7 +138,7 @@ not present different identifiers for the same person, but that is outside of
 the control and knowledge of the application. It should be assumed that
 different IDs represent different people.
 
-The affiliation may be multi-valued and is "scoped", meaning that it applies
+The affiliation may be multi-valued and is *scoped*, meaning that it applies
 within a security domain. Common semantics assert that a person has roles like
 member and staff, or member and student, scoped to the entire affiliate
 organization. An example of one scoped affiliation would be

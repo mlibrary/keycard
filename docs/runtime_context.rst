@@ -1,7 +1,7 @@
 Runtime Context
 ===============
 
-A given application can be run in different environments and configurations for
+An application can be run in different environments and configurations for
 different purposes like development, testing, staging, or public use. There are
 many overlapping terms in use, so, for our purposes here, we use the term
 *Runtime Context* to give labels to the scenarios where the infrastructure is
