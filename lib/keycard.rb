@@ -13,6 +13,7 @@ module Keycard
   end
 end
 
+require "keycard/api_key"
 require "keycard/db"
 require "keycard/railtie" if defined?(Rails)
 require "keycard/institution_finder"
