@@ -26,14 +26,14 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "sequel"
 
-  spec.add_development_dependency "bundler", "~> 1.16"
-  spec.add_development_dependency "coveralls", "~> 0.8"
+  spec.add_development_dependency "bundler"
+  spec.add_development_dependency "coveralls"
   spec.add_development_dependency "pry"
-  spec.add_development_dependency "rake", "~> 12.0"
-  spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "rubocop", "~> 0.52"
-  spec.add_development_dependency "rubocop-rails", "~> 1.1"
-  spec.add_development_dependency "rubocop-rspec", "~> 1.16"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "rubocop-rails"
+  spec.add_development_dependency "rubocop-rspec"
   spec.add_development_dependency "sqlite3"
-  spec.add_development_dependency "yard", "~> 0.9"
+  spec.add_development_dependency "yard"
 end
