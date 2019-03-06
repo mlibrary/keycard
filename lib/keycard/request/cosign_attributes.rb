@@ -6,14 +6,6 @@ module Keycard::Request
   # the pid/eid are the same and there are currently no additional
   # attributes extracted.
   class CosignAttributes < Attributes
-    def base
-      {
-        user_pid:  user_pid,
-        user_eid:  user_eid,
-        client_ip: client_ip
-      }
-    end
-
     def user_pid
       get 'HTTP_X_REMOTE_USER'
     end

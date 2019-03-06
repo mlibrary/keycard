@@ -4,11 +4,17 @@ require "sequel_helper"
 require "keycard/request/attributes"
 
 RSpec.describe Keycard::Request::Attributes do
-  let(:finder_attributes) { { baz: 'quux', finder_attr: 'value' } }
+  let(:finder_attributes) { { baz: 'quux', finder_id_key: 'value' } }
   let(:finder) do
-    double(:finder, attributes_for: finder_attributes, identity_keys: [:finder_attr])
+    double(:finder, attributes_for: finder_attributes, identity_keys: [:finder_id_key])
   end
-  let(:rack_request) { double(:rack_request) }
+  let(:auth_token) { "myauthtoken" }
+  let(:rack_request) do
+    double(
+      :rack_request,
+      env: { 'HTTP_AUTHORIZATION' => "Token token=\"#{auth_token}\", opt=\"someopt\"" }
+    )
+  end
   let(:attributes) { described_class.new(rack_request, finders: [finder]) }
 
   it "takes a request" do
@@ -21,7 +27,7 @@ RSpec.describe Keycard::Request::Attributes do
         .to contain_exactly(:user_pid, :user_eid)
     end
     it "lists combines its identity keys with those of its finders" do
-      expect(attributes.identity_keys).to contain_exactly(:user_pid, :user_eid, :finder_attr)
+      expect(attributes.identity_keys).to contain_exactly(:user_pid, :user_eid, :finder_id_key)
     end
   end
 
@@ -37,15 +43,26 @@ RSpec.describe Keycard::Request::Attributes do
     it { expect(attributes.client_ip).to be nil }
   end
 
+  describe "#auth_token" do
+    it "extracts the auth_token from HTTP_AUTHORIZATION" do
+      expect(attributes.auth_token).to eq(auth_token)
+    end
+  end
+
   describe "#base" do
-    it "is empty" do
-      expect(attributes.base).to eq({})
+    it "includes our default attrs" do
+      expect(attributes.base).to eql(
+        user_pid: nil,
+        user_eid: nil,
+        client_ip: nil,
+        auth_token: auth_token
+      )
     end
   end
 
   describe "#[]" do
     it "can get the value of a finder attribute" do
-      expect(attributes[:finder_attr]).to eql('value')
+      expect(attributes[:finder_id_key]).to eql('value')
     end
   end
 
@@ -71,7 +88,7 @@ RSpec.describe Keycard::Request::Attributes do
       expect(attributes.identity).to eql(
         user_pid: 'pid',
         user_eid: 'eid',
-        finder_attr: 'value'
+        finder_id_key: 'value'
       )
     end
   end
@@ -81,7 +98,7 @@ RSpec.describe Keycard::Request::Attributes do
       let(:base_attributes) { { user_pid: 'user', client_ip: '10.0.0.1' } }
       before(:each) { allow(attributes).to receive(:base).and_return(base_attributes) }
 
-      it "returns non-identity attributes" do
+      it "returns supplemental (non-identity) attributes" do
         expect(attributes.supplemental).to eq(baz: 'quux', client_ip: '10.0.0.1')
       end
     end

@@ -18,3 +18,4 @@ require "keycard/db"
 require "keycard/railtie" if defined?(Rails)
 require "keycard/institution_finder"
 require "keycard/request"
+require "keycard/token"

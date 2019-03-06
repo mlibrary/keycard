@@ -10,19 +10,18 @@ module Keycard::Request
   # requests, and the user_pid, for requests from authenticated users.
   class ShibbolethAttributes < Attributes
     def base # rubocop:disable Metrics/MethodLength
-      {
-        user_pid:                   user_pid,
-        user_eid:                   user_eid,
-        client_ip:                  client_ip,
-        persistentNameID:           persistent_id,
-        eduPersonPrincipalName:     principal_name,
-        eduPersonScopedAffiliation: affiliation,
-        displayName:                display_name,
-        mail:                       email,
-        authnContextClassRef:       authn_context,
-        authenticationMethod:       authn_method,
-        identity_provider:          identity_provider
-      }
+      super.merge(
+        {
+          persistentNameID:           persistent_id,
+          eduPersonPrincipalName:     principal_name,
+          eduPersonScopedAffiliation: affiliation,
+          displayName:                display_name,
+          mail:                       email,
+          authnContextClassRef:       authn_context,
+          authenticationMethod:       authn_method,
+          identity_provider:          identity_provider
+        }
+      )
     end
 
     def user_pid
