@@ -41,7 +41,7 @@ RSpec.describe Keycard::Request::ProxiedAttributes do
       expect(attributes.user_eid).to be_nil
     end
 
-    it "the client_ip is empty" do
+    it "the client_ip is empty (this would be a proxy configuration error)" do
       expect(attributes.client_ip).to be_nil
     end
   end

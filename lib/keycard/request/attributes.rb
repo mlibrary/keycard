@@ -52,12 +52,23 @@ module Keycard::Request
       nil
     end
 
+    # The token supplied by the user via auth_param according to RFC 7235. Typically,
+    # this is the API token.
+    def auth_token
+      Keycard::Token.rfc7235(safe('HTTP_AUTHORIZATION'))
+    end
+
     # The set of base attributes for this request.
     #
     # Subclasses should implement user_pid, user_eid, and client_ip
     # and include them in the hash under those keys.
     def base
-      {}
+      {
+        user_pid: user_pid,
+        user_eid: user_eid,
+        client_ip: client_ip,
+        auth_token: auth_token
+      }
     end
 
     def [](attr)
