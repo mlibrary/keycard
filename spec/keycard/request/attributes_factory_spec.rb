@@ -27,10 +27,10 @@ end
 module Keycard::Request
   RSpec.describe AttributesFactory do
     access = {
-      'direct'        => DirectAttributes,
-      'proxy'         => ProxiedAttributes,
-      'cosign'        => CosignAttributes,
-      'shibboleth'    => ShibbolethAttributes,
+      'direct' => DirectAttributes,
+      'proxy' => ProxiedAttributes,
+      'cosign' => CosignAttributes,
+      'shibboleth' => ShibbolethAttributes,
       '(any unknown)' => DirectAttributes
     }
     access.each do |mode, klass|

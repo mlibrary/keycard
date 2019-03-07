@@ -3,11 +3,12 @@
 require "keycard/request/shibboleth_attributes"
 
 RSpec.describe Keycard::Request::ShibbolethAttributes do
+  let(:attributes) { described_class.new(rack_request) }
   context "with headers via Shibboleth" do
     # rubocop:disable Metrics/LineLength
-    let(:request) do
+    let(:rack_request) do
       double(
-        'request',
+        :rack_request,
         env: {
           'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => 'someuser@default.invalid',
           'HTTP_X_SHIB_EDUPERSONSCOPEDAFFILIATION' => 'member@default.invalid;staff@default.invalid',
@@ -22,8 +23,6 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
       )
     end
     # rubocop:enable Metrics/LineLength
-
-    let(:attributes) { described_class.new(request) }
 
     it "uses the Persistent NameID for the user_pid" do
       expect(attributes.user_pid).to eq(
@@ -110,8 +109,7 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
   end
 
   context "with no forwarded headers" do
-    let(:request)    { double('request', env: {}) }
-    let(:attributes) { described_class.new(request) }
+    let(:rack_request) { double(:rack_request, env: {}) }
 
     it "the user_pid is empty" do
       expect(attributes.user_pid).to be_nil
@@ -127,12 +125,11 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
   end
 
   context "with multiple forwarded addresses" do
-    let(:request) do
-      double('request', env: {
+    let(:rack_request) do
+      double(:rack_request, env: {
                'HTTP_X_FORWARDED_FOR' => '10.0.0.2, 10.0.0.1'
              })
     end
-    let(:attributes) { described_class.new(request) }
 
     it "extracts the first address" do
       expect(attributes.client_ip).to eq '10.0.0.2'
@@ -140,10 +137,9 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
   end
 
   context "with a '(null)' header value" do
-    let(:request) do
-      double('request', env: { 'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => '(null)' })
+    let(:rack_request) do
+      double(:rack_request, env: { 'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => '(null)' })
     end
-    let(:attributes) { described_class.new(request) }
 
     it "trims the value to nil" do
       expect(attributes.user_eid).to be_nil
@@ -151,10 +147,9 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
   end
 
   context "with an empty string header value" do
-    let(:request) do
-      double('request', env: { 'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => '' })
+    let(:rack_request) do
+      double(:rack_request, env: { 'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => '' })
     end
-    let(:attributes) { described_class.new(request) }
 
     it "trims the value to nil" do
       expect(attributes.user_eid).to be_nil
