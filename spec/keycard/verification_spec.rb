@@ -3,7 +3,6 @@
 RSpec.describe Keycard::Verification do
   class FakeUserModel
     def self.finder
-      new
     end
   end
 
