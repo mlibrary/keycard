@@ -13,6 +13,7 @@ module Keycard
       @account = nil
       @log = []
       @failed = false
+      @csrf_safe = false
     end
 
     # Has this authentication completed successfully?
@@ -23,6 +24,15 @@ module Keycard
     # Was there a failure for an attempted verification?
     def failed?
       @failed
+    end
+
+    # Does a completed verification protect from Cross-Site Request Forgery?
+    #
+    # This should be true in cases where the client presents authentication
+    # that is not automatic, like an authentication token, rather than
+    # automatic credentials like cookies or proxy-applied headers.
+    def csrf_safe?
+      @csrf_safe
     end
 
     # Log that the verification method was not applicable; continue the chain.
@@ -47,9 +57,12 @@ module Keycard
     #
     # @param account [User|Account] Object/model representing the authenticated account
     # @param message [String] a message about how the verification succeeded
+    # @param csrf_safe [Boolean] set to true if this verification method precludes
+    #   Cross-Site Request Forgery, as with a non-cookie token sent with the request
     # @return [Boolean] true, indicating that futher verification should not occur
-    def succeeded(account, message)
+    def succeeded(account, message, csrf_safe: false)
       @account = account
+      @csrf_safe ||= csrf_safe
       log << "[SUCCESS] #{message}"
       true
     end

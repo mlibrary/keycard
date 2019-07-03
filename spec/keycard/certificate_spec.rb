@@ -11,6 +11,11 @@ RSpec.describe Keycard::Certificate do
     expect(certificate.failed?).to eq false
   end
 
+  it "is not considered CSRF-safe to start" do
+    certificate = described_class.new
+    expect(certificate.csrf_safe?).to eq false
+  end
+
   context "when verification is skipped" do
     let(:certificate) { described_class.new }
     let!(:result)     { certificate.skipped("some message") }
@@ -25,6 +30,10 @@ RSpec.describe Keycard::Certificate do
 
     it "is not considered failed" do
       expect(certificate.failed?).to eq false
+    end
+
+    it "is not considered CSRF-safe" do
+      expect(certificate.csrf_safe?).to eq false
     end
 
     it "signals that the verification chain is incomplete" do
@@ -49,12 +58,26 @@ RSpec.describe Keycard::Certificate do
       expect(certificate.failed?).to eq false
     end
 
+    it "is not considered CSRF-safe" do
+      expect(certificate.csrf_safe?).to eq false
+    end
+
     it "records the account" do
       expect(certificate.account).to eq account
     end
 
     it "signals that the verification chain is complete" do
       expect(result).to eq true
+    end
+  end
+
+  context "when verification succeeds, declaring the request CSRF-safe" do
+    let(:certificate) { described_class.new }
+    let(:account)     { double('Account') }
+    let!(:result)     { certificate.succeeded(account, "some message", csrf_safe: true) }
+
+    it "is considered CSRF-safe" do
+      expect(certificate.csrf_safe?).to eq true
     end
   end
 
@@ -72,6 +95,10 @@ RSpec.describe Keycard::Certificate do
 
     it "is considered failed" do
       expect(certificate.failed?).to eq true
+    end
+
+    it "is not considered CSRF-safe" do
+      expect(certificate.csrf_safe?).to eq false
     end
 
     it "signals that the verification chain is complete" do

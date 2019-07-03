@@ -22,6 +22,10 @@ RSpec.describe Keycard::Verification::AuthToken do
       expect(certificate.authenticated?).to eq true
     end
 
+    it "is marked CSRF-safe" do
+      expect(certificate.csrf_safe?).to eq true
+    end
+
     it "finds the user" do
       expect(certificate.account).to eq someuser
     end

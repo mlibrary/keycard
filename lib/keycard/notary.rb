@@ -30,13 +30,13 @@ module Keycard
     # Keycard.config.access value.
     #
     # This instance assumes that there is a `User` model with class methods
-    # called `authenticate_by_id`, `authenticate_by_auth_token`, and
+    # called `authenticate_by_auth_token`, `authenticate_by_id`, and
     # `authenticate_by_user_eid`. These should find the user with the given
     # id, authorization token, and EID/username. This is the order of
     # precedence, as well, corresponding to the following Verification classes:
     #
-    # 1. {Keycard::Verification::SessionUserId}
-    # 2. {Keycard::Verification::AuthToken}
+    # 1. {Keycard::Verification::AuthToken}
+    # 2. {Keycard::Verification::SessionUserId}
     # 3. {Keycard::Verification::UserEid}
     #
     # @return [Keycard::Notary] a default Notary instance, bound to conventional
@@ -45,8 +45,8 @@ module Keycard
       new(
         attributes_factory: Keycard::Request::AttributesFactory.new,
         verifications: [
-          Keycard::Verification::SessionUserId.bind_class_method(:User, :authenticate_by_id),
           Keycard::Verification::AuthToken.bind_class_method(:User, :authenticate_by_auth_token),
+          Keycard::Verification::SessionUserId.bind_class_method(:User, :authenticate_by_id),
           Keycard::Verification::UserEid.bind_class_method(:User, :authenticate_by_user_eid)
         ]
       )

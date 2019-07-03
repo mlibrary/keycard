@@ -102,9 +102,9 @@ module Keycard
       certificate.skipped(message)
     end
 
-    def succeeded(account, message)
+    def succeeded(account, message, csrf_safe: false)
       account.identity = attributes.identity
-      certificate.succeeded(account, message)
+      certificate.succeeded(account, message, csrf_safe: csrf_safe)
     end
 
     def failed(message)

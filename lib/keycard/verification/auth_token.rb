@@ -12,7 +12,7 @@ module Keycard
         if token.nil?
           skipped("No auth_token found in request attributes")
         elsif (account = finder.call(token))
-          succeeded(account, "Account found for supplied Authorization Token")
+          succeeded(account, "Account found for supplied Authorization Token", csrf_safe: true)
         else
           failed("Account not found for supplied Authorization Token")
         end

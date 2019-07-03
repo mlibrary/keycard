@@ -15,12 +15,16 @@ RSpec.describe Keycard::ControllerMethods do
     def reset_session
       session.clear
     end
+
+    def session_timeout
+      60
+    end
   end
 
   subject(:controller) { FakeController.new(request, session, notary) }
 
   let(:request) { OpenStruct.new(env: {}) }
-  let(:session) { {} }
+  let(:session) { { timestamp: Time.now } }
 
   before(:each) do
     allow(notary).to receive(:waive) do |account|
@@ -45,23 +49,24 @@ RSpec.describe Keycard::ControllerMethods do
       expect(controller.current_user).to eq(account)
     end
 
-    it "does not raise AuthenticationRequired from the authenticate! before_action" do
-      expect { controller.authenticate! }.not_to raise_error(Keycard::AuthenticationRequired)
+    it "does not raise from the authenticate! before_action" do
+      expect { controller.authenticate! }.not_to raise_error
     end
 
-    it "does not raise AuthenticationFailed from the authenticate! before_action" do
-      expect { controller.authenticate! }.not_to raise_error(Keycard::AuthenticationRequired)
-    end
-
-    it "resets the session when explicitly calling login" do
+    it "resets the session when logging in" do
       session[:foo] = "bar"
       controller.login
       expect(session[:foo]).to be_nil
     end
 
-    it "sets the session user_id when explicitly calling login" do
+    it "sets the session user_id when logging in" do
       controller.login
       expect(session[:user_id]).to eq 1
+    end
+
+    it "sets the session timestamp when logging in" do
+      controller.login
+      expect(Time.now - session[:timestamp]).to be <= 1
     end
 
     it "preserves the :return_to URL in session when logging in" do
@@ -80,6 +85,12 @@ RSpec.describe Keycard::ControllerMethods do
       user = double("User", id: 2)
       controller.auto_login(user)
       expect(session[:user_id]).to eq 2
+    end
+
+    it "sets the session timestamp when logging in" do
+      user = double("User", id: 2)
+      controller.auto_login(user)
+      expect(Time.now - session[:timestamp]).to be <= 1
     end
 
     it "clears the current_user when doing logout" do
@@ -145,6 +156,38 @@ RSpec.describe Keycard::ControllerMethods do
     it "sets the session user_id when doing auto-login" do
       controller.auto_login(account)
       expect(session[:user_id]).to eq 1
+    end
+  end
+
+  context "with an expired or nonexistent session" do
+    let(:notary) { double("Notary") }
+
+    it "resets the session when validating" do
+      session[:timestamp] = Time.now - 1000
+      session[:something] = "value"
+      controller.validate_session
+
+      expect(session).not_to include(:something)
+    end
+
+    it "preserves a CSRF token for login workflows" do
+      session[:timestamp] = nil
+      session[:_csrf_token] = "abcd"
+      controller.validate_session
+
+      expect(session[:_csrf_token]).to eq "abcd"
+    end
+  end
+
+  context "with a current session" do
+    let(:notary) { double("Notary") }
+
+    it "does not reset the session when validating" do
+      session[:timestamp] = Time.now - 5
+      session[:something] = "value"
+      controller.validate_session
+
+      expect(session[:something]).to eq "value"
     end
   end
 
