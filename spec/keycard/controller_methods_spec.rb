@@ -15,10 +15,6 @@ RSpec.describe Keycard::ControllerMethods do
     def reset_session
       session.clear
     end
-
-    def session_timeout
-      60
-    end
   end
 
   subject(:controller) { FakeController.new(request, session, notary) }
@@ -163,7 +159,15 @@ RSpec.describe Keycard::ControllerMethods do
     let(:notary) { double("Notary") }
 
     it "resets the session when validating" do
-      session[:timestamp] = Time.now - 1000
+      session[:timestamp] = Time.now - 86_401
+      session[:something] = "value"
+      controller.validate_session
+
+      expect(session).not_to include(:something)
+    end
+
+    it "resets the session with a garbage timestamp" do
+      session[:timestamp] = "bad"
       session[:something] = "value"
       controller.validate_session
 
