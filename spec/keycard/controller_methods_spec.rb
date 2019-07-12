@@ -24,18 +24,18 @@ RSpec.describe Keycard::ControllerMethods do
 
   before(:each) do
     allow(notary).to receive(:waive) do |account|
-      double("Certificate", authenticated?: true, failed?: false, account: account)
+      double("Result", authenticated?: true, failed?: false, account: account)
     end
 
     allow(notary).to receive(:reject).and_return(
-      double("Certificate", authenticated?: false, failed?: true, account: nil)
+      double("Result", authenticated?: false, failed?: true, account: nil)
     )
   end
 
   context "with successful authentication" do
-    let(:account)     { double("User", id: 1) }
-    let(:certificate) { double("Certificate", authenticated?: true, failed?: false, account: account) }
-    let(:notary)      { double("Notary", authenticate: certificate) }
+    let(:account) { double("User", id: 1) }
+    let(:result)  { double("Result", authenticated?: true, failed?: false, account: account) }
+    let(:notary)  { double("Notary", authenticate: result) }
 
     it "reports that the user is logged in" do
       expect(controller.logged_in?).to eq true
@@ -103,8 +103,8 @@ RSpec.describe Keycard::ControllerMethods do
   end
 
   context "with failed authentication" do
-    let(:certificate) { double("Certificate", authenticated?: false, failed?: true, account: nil) }
-    let(:notary)      { double("Notary", authenticate: certificate) }
+    let(:result) { double("Result", authenticated?: false, failed?: true, account: nil) }
+    let(:notary) { double("Notary", authenticate: result) }
 
     it "reports that the user is not logged in" do
       expect(controller.logged_in?).to eq false
@@ -124,9 +124,9 @@ RSpec.describe Keycard::ControllerMethods do
   end
 
   context "with missing authentication" do
-    let(:account)     { double("User", id: 1) }
-    let(:certificate) { double("Certificate", authenticated?: false, failed?: false, account: nil) }
-    let(:notary)      { double("Notary", authenticate: certificate) }
+    let(:account) { double("User", id: 1) }
+    let(:result)  { double("Result", authenticated?: false, failed?: false, account: nil) }
+    let(:notary)  { double("Notary", authenticate: result) }
 
     it "reports that the user is not logged in" do
       expect(controller.logged_in?).to eq false
@@ -196,12 +196,12 @@ RSpec.describe Keycard::ControllerMethods do
   end
 
   # This example group verifies that user-supplied credentials are passed along
-  # to the Notary properly. To use this would require a custom verification
-  # that inspects the keyword arguments appropriately for the credentials.
-  context "with user-supplied credentials for login and corresponding verification method" do
+  # to the Notary properly. To use this would require a custom authentication
+  # method that inspects the keyword arguments appropriately for the credentials.
+  context "with user-supplied credentials for login and corresponding authentication method" do
     let(:account) { double("User", id: 1) }
-    let(:failure) { double("Certificate", authenticated?: false, failed?: true, account: nil) }
-    let(:success) { double("Certificate", authenticated?: true, failed?: false, account: account) }
+    let(:failure) { double("Result", authenticated?: false, failed?: true, account: nil) }
+    let(:success) { double("Result", authenticated?: true, failed?: false, account: account) }
     let(:notary)  { double("Notary") }
 
     before(:each) do

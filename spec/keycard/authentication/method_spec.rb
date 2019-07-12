@@ -1,21 +1,20 @@
 # frozen_string_literal: true
 
-RSpec.describe Keycard::Verification do
+RSpec.describe Keycard::Authentication::Method do
   class FakeUserModel
-    def self.finder
-    end
+    def self.finder; end
   end
 
   it "always skips" do
-    certificate = double("Certificate")
+    result = double("Result")
     verification = described_class.new(
       attributes: {},
       session: {},
-      certificate: certificate,
+      result: result,
       finder: double
     )
 
-    expect(certificate).to receive(:skipped)
+    expect(result).to receive(:skipped)
     verification.apply
   end
 

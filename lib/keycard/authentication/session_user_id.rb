@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 module Keycard
-  class Verification
+  module Authentication
     # Identity verification based on a user_id present in the session.
     #
     # A user_id in the session would typically be placed there after some other
     # login process, after which it is sufficient to authenticate the session.
     # The finder, then, takes only one parameter, the ID as on the account's #id
     # property.
-    class SessionUserId < Verification
+    class SessionUserId < Method
       def apply
         if user_id.nil?
           skipped("No user_id found in session")

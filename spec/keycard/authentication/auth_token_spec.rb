@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-RSpec.describe Keycard::Verification::AuthToken do
-  subject(:verification) do
-    described_class.new(attributes: attributes, session: {}, certificate: certificate, finder: finder)
+RSpec.describe Keycard::Authentication::AuthToken do
+  subject(:method) do
+    described_class.new(attributes: attributes, session: {}, result: result, finder: finder)
   end
 
-  let(:certificate) { Keycard::Certificate.new }
+  let(:result) { Keycard::Authentication::Result.new }
   let(:finder)      { double('UserModel', call: nil) }
 
   context "when request attributes include an authorization token the finder resolves" do
@@ -15,23 +15,23 @@ RSpec.describe Keycard::Verification::AuthToken do
 
     before(:each) do
       allow(finder).to receive(:call).with("raw-token").and_return(someuser)
-      verification.apply
+      method.apply
     end
 
     it "is authenticated" do
-      expect(certificate.authenticated?).to eq true
+      expect(result.authenticated?).to eq true
     end
 
     it "is marked CSRF-safe" do
-      expect(certificate.csrf_safe?).to eq true
+      expect(result.csrf_safe?).to eq true
     end
 
     it "finds the user" do
-      expect(certificate.account).to eq someuser
+      expect(result.account).to eq someuser
     end
 
     it "sets the identity attributes on the account" do
-      expect(certificate.account.identity).to eq identity
+      expect(result.account.identity).to eq identity
     end
   end
 
@@ -39,19 +39,19 @@ RSpec.describe Keycard::Verification::AuthToken do
     let(:attributes) { double("Attributes", auth_token: nil) }
 
     before(:each) do
-      verification.apply
+      method.apply
     end
 
     it "is not authenticated" do
-      expect(certificate.authenticated?).to eq false
+      expect(result.authenticated?).to eq false
     end
 
     it "is not failed" do
-      expect(certificate.failed?).to eq false
+      expect(result.failed?).to eq false
     end
 
     it "does not set an account" do
-      expect(certificate.account).to be_nil
+      expect(result.account).to be_nil
     end
   end
 
@@ -59,19 +59,19 @@ RSpec.describe Keycard::Verification::AuthToken do
     let(:attributes) { double("Attributes", auth_token: "bad-token") }
 
     before(:each) do
-      verification.apply
+      method.apply
     end
 
     it "is not authenticated" do
-      expect(certificate.authenticated?).to eq false
+      expect(result.authenticated?).to eq false
     end
 
     it "is failed" do
-      expect(certificate.failed?).to eq true
+      expect(result.failed?).to eq true
     end
 
     it "does not set an account" do
-      expect(certificate.account).to be_nil
+      expect(result.account).to be_nil
     end
   end
 end

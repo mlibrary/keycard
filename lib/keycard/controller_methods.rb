@@ -12,7 +12,7 @@ module Keycard
     # Check whether the current request is authenticated as coming from a known
     # person or account.
     #
-    # @return [Boolean] true if any of the {Notary}'s configured verification
+    # @return [Boolean] true if any of the {Notary}'s configured authentication
     #   methods succeeds
     def logged_in?
       authentication.authenticated?
@@ -40,16 +40,16 @@ module Keycard
                 end
       reset_session if elapsed >= session_timeout
       session[:_csrf_token] = csrf_token
-      session[:timestamp] = Time.now if session.has_key?(:timestamp)
+      session[:timestamp] = Time.now if session.key?(:timestamp)
     end
 
-    # Require that some verification method successfully identifies a user/account,
+    # Require that some authentication method successfully identifies a user/account,
     # raising an exception if there is a failure for active credentials or no
     # applicable credentials are presented.
     #
-    # @raise [AuthenticationFailed] if credentials for an attempted verification
-    #   method are incorrect
-    # @raise [AuthenticationRequired] if all verification methods are skipped
+    # @raise [AuthenticationFailed] if credentials for an attempted
+    #   authentication method are incorrect
+    # @raise [AuthenticationRequired] if all authentication methods are skipped
     #   and authentication could not be attempted
     # @return nil
     def authenticate!
@@ -61,7 +61,7 @@ module Keycard
     # establish a session.
     #
     # @param credentials [Hash|kwargs] user-supplied credentials that will be
-    #   passed to each verification method
+    #   passed to each authentication method
     # @return [Boolean] whether the login attempt was successful
     def login(**credentials)
       authentication(credentials).authenticated?.tap do |success|

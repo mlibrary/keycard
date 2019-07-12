@@ -23,9 +23,14 @@ require "keycard/institution_finder"
 require "keycard/request"
 require "keycard/token"
 
-require "keycard/certificate"
-require "keycard/verification"
 require "keycard/notary"
+
+require "keycard/authentication/method"
+require "keycard/authentication/result"
+
+require "keycard/authentication/auth_token"
+require "keycard/authentication/session_user_id"
+require "keycard/authentication/user_eid"
 
 require "keycard/reloadable_proxy"
 require "keycard/controller_methods"

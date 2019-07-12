@@ -2,33 +2,33 @@
 
 RSpec.describe Keycard::Notary do
   subject(:notary) do
-    described_class.new(attributes_factory: attributes_factory, verifications: verifications)
+    described_class.new(attributes_factory: attributes_factory, methods: methods)
   end
 
-  class Skip < Keycard::Verification
+  class Skip < Keycard::Authentication::Method
     def apply
       skipped("skip!")
     end
   end
 
-  class Success < Keycard::Verification
+  class Success < Keycard::Authentication::Method
     def apply
       succeeded(OpenStruct.new, "success!")
     end
   end
 
-  class Failure < Keycard::Verification
+  class Failure < Keycard::Authentication::Method
     def apply
       failed("failure!")
     end
   end
 
   def make_factory(klass)
-    lambda do |attributes, session, certificate, **credentials|
+    lambda do |attributes, session, result, **credentials|
       klass.new(
         attributes: attributes,
         session: session,
-        certificate: certificate,
+        result: result,
         finder: nil,
         credentials: credentials
       )
@@ -42,92 +42,92 @@ RSpec.describe Keycard::Notary do
   let(:attributes)         { double("Attributes", user_eid: "someuser", identity: { user_eid: "someuser" }) }
   let(:attributes_factory) { double("AttributesFactory", for: attributes) }
 
-  context "with one successful verification" do
-    let(:verifications) { [success] }
-    let(:certificate) { notary.authenticate(double("Request"), double("Session")) }
+  context "with one successful method" do
+    let(:methods) { [success] }
+    let(:result)  { notary.authenticate(double("Request"), double("Session")) }
 
-    it "gives an authenticated certificate" do
-      expect(certificate.authenticated?).to eq true
+    it "gives an authenticated result" do
+      expect(result.authenticated?).to eq true
     end
   end
 
-  context "with one successful verification followed by a skip" do
-    let(:verifications) { [success, skip] }
-    let(:certificate) { notary.authenticate(double("Request"), double("Session")) }
+  context "with one successful method followed by a skip" do
+    let(:methods) { [success, skip] }
+    let(:result) { notary.authenticate(double("Request"), double("Session")) }
 
-    it "gives an authenticated certificate" do
-      expect(certificate.authenticated?).to eq true
+    it "gives an authenticated result" do
+      expect(result.authenticated?).to eq true
     end
 
-    it "does not apply the verification that would be skipped" do
-      expect(certificate.log).not_to include(/skip!/)
-    end
-  end
-
-  context "with one skip followed by a successful verification" do
-    let(:verifications) { [skip, success] }
-    let(:certificate) { notary.authenticate(double("Request"), double("Session")) }
-
-    it "gives an authenticated certificate" do
-      expect(certificate.authenticated?).to eq true
-    end
-
-    it "applies both verifications" do
-      expect(certificate.log).to include(/skip!/, /success!/)
+    it "does not apply the method that would be skipped" do
+      expect(result.log).not_to include(/skip!/)
     end
   end
 
-  context "with one skip followed by a successful and would-be failed verification" do
-    let(:verifications) { [skip, success, failure] }
-    let(:certificate) { notary.authenticate(double("Request"), double("Session")) }
+  context "with one skip followed by a successful method" do
+    let(:methods) { [skip, success] }
+    let(:result)  { notary.authenticate(double("Request"), double("Session")) }
 
-    it "gives an authenticated certificate" do
-      expect(certificate.authenticated?).to eq true
+    it "gives an authenticated result" do
+      expect(result.authenticated?).to eq true
+    end
+
+    it "applies both methods" do
+      expect(result.log).to include(/skip!/, /success!/)
+    end
+  end
+
+  context "with one skip followed by a successful and would-be failed method" do
+    let(:methods) { [skip, success, failure] }
+    let(:result)  { notary.authenticate(double("Request"), double("Session")) }
+
+    it "gives an authenticated result" do
+      expect(result.authenticated?).to eq true
     end
 
     it "does not apply the failure after the success" do
-      expect(certificate.log).not_to include(/failure!/)
+      expect(result.log).not_to include(/failure!/)
     end
   end
 
-  context "with one failed verification followed by a would-be successful verification" do
-    let(:verifications) { [failure, success] }
-    let(:certificate) { notary.authenticate(double("Request"), double("Session")) }
+  context "with one failed method followed by a would-be successful method" do
+    let(:methods) { [failure, success] }
+    let(:result)  { notary.authenticate(double("Request"), double("Session")) }
 
-    it "gives a failed certificate" do
-      expect(certificate.failed?).to eq true
+    it "gives a failed result" do
+      expect(result.failed?).to eq true
     end
 
     it "does not apply the success after the failure" do
-      expect(certificate.log).not_to include(/success!/)
+      expect(result.log).not_to include(/success!/)
     end
   end
 
-  context "when waiving all verification for an account" do
-    let(:verifications) { [failure] }
-    let(:account)       { double("User") }
-    let(:certificate)   { notary.waive(account) }
+  context "when waiving all authentication for an account" do
+    let(:methods) { [failure] }
+    let(:account) { double("User") }
+    let(:result)  { notary.waive(account) }
 
-    it "gives an authenticated certificate" do
-      expect(certificate.authenticated?).to eq true
+    it "gives an authenticated result" do
+      expect(result.authenticated?).to eq true
     end
 
-    it "sets the certificate's account" do
-      expect(certificate.account).to eq(account)
+    it "sets the result's account" do
+      expect(result.account).to eq(account)
     end
   end
 
   context "when rejecting a request" do
-    let(:verifications) { [failure] }
-    let(:account)       { double("User") }
-    let(:certificate)   { notary.reject }
+    let(:methods) { [failure] }
+    let(:account) { double("User") }
+    let(:result)  { notary.reject }
 
-    it "gives an unauthenticated certificate" do
-      expect(certificate.authenticated?).to eq false
+    it "gives an unauthenticated result" do
+      expect(result.authenticated?).to eq false
     end
 
-    it "gives an failed certificate" do
-      expect(certificate.failed?).to eq true
+    it "gives a failed result" do
+      expect(result.failed?).to eq true
     end
   end
 
@@ -136,15 +136,15 @@ RSpec.describe Keycard::Notary do
   # actually binding during test.
   describe "::default" do
     before(:each) do
-      allow(Keycard::Verification::SessionUserId)
+      allow(Keycard::Authentication::SessionUserId)
         .to receive(:bind_class_method)
         .with(:User, :authenticate_by_id)
         .and_return(proc {})
-      allow(Keycard::Verification::AuthToken)
+      allow(Keycard::Authentication::AuthToken)
         .to receive(:bind_class_method)
         .with(:User, :authenticate_by_auth_token)
         .and_return(proc {})
-      allow(Keycard::Verification::UserEid)
+      allow(Keycard::Authentication::UserEid)
         .to receive(:bind_class_method)
         .with(:User, :authenticate_by_user_eid)
         .and_return(proc {})
@@ -158,17 +158,17 @@ RSpec.describe Keycard::Notary do
     end
 
     it "binds SessionUserId to User.authenticate_by_id" do
-      expect(Keycard::Verification::SessionUserId).to receive(:bind_class_method)
+      expect(Keycard::Authentication::SessionUserId).to receive(:bind_class_method)
       notary
     end
 
     it "binds AuthToken to User.authenticate_by_auth_token" do
-      expect(Keycard::Verification::AuthToken).to receive(:bind_class_method)
+      expect(Keycard::Authentication::AuthToken).to receive(:bind_class_method)
       notary
     end
 
     it "binds UserEid to User.authenticate_by_user_id" do
-      expect(Keycard::Verification::UserEid).to receive(:bind_class_method)
+      expect(Keycard::Authentication::UserEid).to receive(:bind_class_method)
       notary
     end
   end
