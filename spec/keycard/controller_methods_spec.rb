@@ -20,7 +20,7 @@ RSpec.describe Keycard::ControllerMethods do
   subject(:controller) { FakeController.new(request, session, notary) }
 
   let(:request) { OpenStruct.new(env: {}) }
-  let(:session) { { timestamp: Time.now } }
+  let(:session) { { timestamp: Time.now.to_i} }
 
   before(:each) do
     allow(notary).to receive(:waive) do |account|
@@ -62,7 +62,7 @@ RSpec.describe Keycard::ControllerMethods do
 
     it "sets the session timestamp when logging in" do
       controller.login
-      expect(Time.now - session[:timestamp]).to be <= 1
+      expect(Time.now - Time.at(session[:timestamp])).to be <= 1
     end
 
     it "preserves the :return_to URL in session when logging in" do
@@ -86,7 +86,7 @@ RSpec.describe Keycard::ControllerMethods do
     it "sets the session timestamp when logging in" do
       user = double("User", id: 2)
       controller.auto_login(user)
-      expect(Time.now - session[:timestamp]).to be <= 1
+      expect(Time.now - Time.at(session[:timestamp])).to be <= 1
     end
 
     it "clears the current_user when doing logout" do
