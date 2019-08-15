@@ -34,13 +34,13 @@ module Keycard
     def validate_session
       csrf_token = session[:_csrf_token]
       elapsed = begin
-                  Time.now - (session[:timestamp] || Time.at(0))
+                  Time.now - Time.at(session[:timestamp] || 0)
                 rescue StandardError
                   session_timeout
                 end
       reset_session if elapsed >= session_timeout
       session[:_csrf_token] = csrf_token
-      session[:timestamp] = Time.now if session.key?(:timestamp)
+      session[:timestamp] = Time.now.to_i if session.key?(:timestamp)
     end
 
     # Require that some authentication method successfully identifies a user/account,
@@ -105,7 +105,7 @@ module Keycard
       reset_session
       session[:return_to] = return_url
       session[:user_id] = current_user.id
-      session[:timestamp] = Time.now
+      session[:timestamp] = Time.now.to_i
     end
   end
 end
