@@ -64,7 +64,7 @@ module Keycard
     #   passed to each authentication method
     # @return [Boolean] whether the login attempt was successful
     def login(**credentials)
-      authentication(credentials).authenticated?.tap do |success|
+      authentication(**credentials).authenticated?.tap do |success|
         setup_session if success
       end
     end
@@ -88,7 +88,7 @@ module Keycard
 
     def authentication(**credentials)
       request.env["keycard.authentication"] ||=
-        notary.authenticate(request, session, credentials)
+        notary.authenticate(request, session, **credentials)
     end
 
     # The session timeout, in seconds. Sessions will be cleared before any

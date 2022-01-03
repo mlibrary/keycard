@@ -61,7 +61,7 @@ module Keycard
       attributes = attributes_factory.for(request)
       Authentication::Result.new.tap do |result|
         methods.find do |factory|
-          factory.call(attributes, session, result, credentials).apply
+          factory.call(attributes, session, result, **credentials).apply
         end
       end
     end
