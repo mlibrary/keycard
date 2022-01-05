@@ -26,4 +26,7 @@ jobs:
       run: bin/standardrb
     - name: Run tests for Ruby ${{ matrix.ruby-version }} on ${{ matrix.os }}
       run: bin/rspec
-
+    - name: Report to Coveralls
+      uses: coverallsapp/github-action@v1.1.2
+      with:
+        github-token: ${{ secrets.github_token }}
