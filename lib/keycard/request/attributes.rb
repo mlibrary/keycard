@@ -55,7 +55,7 @@ module Keycard::Request
     # The token supplied by the user via auth_param according to RFC 7235. Typically,
     # this is the API token.
     def auth_token
-      Keycard::Token.rfc7235(safe('HTTP_AUTHORIZATION'))
+      Keycard::Token.rfc7235(safe("HTTP_AUTHORIZATION"))
     end
 
     # The set of base attributes for this request.
@@ -76,12 +76,12 @@ module Keycard::Request
     end
 
     def all
-      base.merge!(external).delete_if { |_k, v| v.nil? || v == '' }
+      base.merge!(external).delete_if { |_k, v| v.nil? || v == "" }
     end
 
     def external
       finders
-        .map        { |finder| finder.attributes_for(self) }
+        .map { |finder| finder.attributes_for(self) }
         .reduce({}) { |hash, attrs| hash.merge!(attrs) }
     end
 
@@ -116,15 +116,15 @@ module Keycard::Request
     # missing values to an empty string, convenient if you need to do string
     # operations like splitting the value.
     def safe(key)
-      get(key) || ''
+      get(key) || ""
     end
 
     # Scrub a value to remove whitespace, filter the special '(null)' value,
     # and translate resulting empty strings to nil.
     def scrub(value)
-      str = (value || '').strip
+      str = (value || "").strip
       case str
-      when nil, '(null)', ''
+      when nil, "(null)", ""
         nil
       else
         str

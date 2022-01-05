@@ -4,7 +4,7 @@ require "sequel_helper"
 require "keycard/request/attributes"
 
 RSpec.describe Keycard::Request::Attributes do
-  let(:finder_attributes) { { baz: 'quux', finder_id_key: 'value' } }
+  let(:finder_attributes) { {baz: "quux", finder_id_key: "value"} }
   let(:finder) do
     double(:finder, attributes_for: finder_attributes, identity_keys: [:finder_id_key])
   end
@@ -12,7 +12,7 @@ RSpec.describe Keycard::Request::Attributes do
   let(:rack_request) do
     double(
       :rack_request,
-      env: { 'HTTP_AUTHORIZATION' => "Token token=\"#{auth_token}\", opt=\"someopt\"" }
+      env: {"HTTP_AUTHORIZATION" => "Token token=\"#{auth_token}\", opt=\"someopt\""}
     )
   end
   let(:attributes) { described_class.new(rack_request, finders: [finder]) }
@@ -62,13 +62,13 @@ RSpec.describe Keycard::Request::Attributes do
 
   describe "#[]" do
     it "can get the value of a finder attribute" do
-      expect(attributes[:finder_id_key]).to eql('value')
+      expect(attributes[:finder_id_key]).to eql("value")
     end
   end
 
   describe "#all" do
-    let(:base_attributes) { { user_pid: 'pid', user_eid: 'eid', client_ip: '10.0.0.1', zilch: nil } }
-    let(:finder_attributes) { { baz: 'quux', nada: nil } }
+    let(:base_attributes) { {user_pid: "pid", user_eid: "eid", client_ip: "10.0.0.1", zilch: nil} }
+    let(:finder_attributes) { {baz: "quux", nada: nil} }
     before(:each) { allow(attributes).to receive(:base).and_return(base_attributes) }
 
     it "ignores nil attributes" do
@@ -76,36 +76,36 @@ RSpec.describe Keycard::Request::Attributes do
     end
 
     it "includes base attributes and those from finders" do
-      expect(attributes.all).to eql(base_attributes.merge(baz: 'quux'))
+      expect(attributes.all).to eql(base_attributes.merge(baz: "quux"))
     end
   end
 
   describe "#identity" do
-    let(:base_attributes) { { user_pid: 'pid', user_eid: 'eid', client_ip: '10.0.0.1' } }
+    let(:base_attributes) { {user_pid: "pid", user_eid: "eid", client_ip: "10.0.0.1"} }
     before(:each) { allow(attributes).to receive(:base).and_return(base_attributes) }
 
     it "includes pairs according to the identity_keys" do
       expect(attributes.identity).to eql(
-        user_pid: 'pid',
-        user_eid: 'eid',
-        finder_id_key: 'value'
+        user_pid: "pid",
+        user_eid: "eid",
+        finder_id_key: "value"
       )
     end
   end
 
   describe "#supplemental" do
     context "with the default supplemental attributes" do
-      let(:base_attributes) { { user_pid: 'user', client_ip: '10.0.0.1' } }
+      let(:base_attributes) { {user_pid: "user", client_ip: "10.0.0.1"} }
       before(:each) { allow(attributes).to receive(:base).and_return(base_attributes) }
 
       it "returns supplemental (non-identity) attributes" do
-        expect(attributes.supplemental).to eq(baz: 'quux', client_ip: '10.0.0.1')
+        expect(attributes.supplemental).to eq(baz: "quux", client_ip: "10.0.0.1")
       end
     end
 
     context "with additional supplemental attributes in base attributes" do
-      let(:base_attributes) { { user_pid: 'user', aardvarkName: 'Aardvark Jones' } }
-      let(:expected) { { aardvarkName: 'Aardvark Jones', baz: 'quux' } }
+      let(:base_attributes) { {user_pid: "user", aardvarkName: "Aardvark Jones"} }
+      let(:expected) { {aardvarkName: "Aardvark Jones", baz: "quux"} }
       before(:each) { allow(attributes).to receive(:base).and_return(base_attributes) }
 
       it "returns the supplemental attributes" do

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
-
 Sequel.migration do
   change do
     create_table(:aa_inst) do

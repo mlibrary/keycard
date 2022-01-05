@@ -9,9 +9,9 @@ RSpec.describe Keycard::Authentication::UserEid do
   let(:finder) { double("UserModel", call: nil) }
 
   context "when request attributes include a user_eid the finder resolves" do
-    let(:identity)   { { user_eid: "someuser" } }
+    let(:identity) { {user_eid: "someuser"} }
     let(:attributes) { double("Attributes", user_eid: "someuser", identity: identity) }
-    let(:someuser)   { OpenStruct.new }
+    let(:someuser) { OpenStruct.new }
 
     before(:each) do
       allow(finder).to receive(:call).with("someuser").and_return(someuser)

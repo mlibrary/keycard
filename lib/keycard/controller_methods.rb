@@ -34,10 +34,10 @@ module Keycard
     def validate_session
       csrf_token = session[:_csrf_token]
       elapsed = begin
-                  Time.now - Time.at(session[:timestamp] || 0)
-                rescue StandardError
-                  session_timeout
-                end
+        Time.now - Time.at(session[:timestamp] || 0)
+      rescue
+        session_timeout
+      end
       reset_session if elapsed >= session_timeout
       session[:_csrf_token] = csrf_token
       session[:timestamp] = Time.now.to_i if session.key?(:timestamp)

@@ -6,12 +6,12 @@ RSpec.describe Keycard::Authentication::AuthToken do
   end
 
   let(:result) { Keycard::Authentication::Result.new }
-  let(:finder)      { double('UserModel', call: nil) }
+  let(:finder) { double("UserModel", call: nil) }
 
   context "when request attributes include an authorization token the finder resolves" do
-    let(:identity)   { { user_pid: "abc123" } }
-    let(:attributes) { double('Attributes', auth_token: "raw-token", identity: identity) }
-    let(:someuser)   { OpenStruct.new }
+    let(:identity) { {user_pid: "abc123"} }
+    let(:attributes) { double("Attributes", auth_token: "raw-token", identity: identity) }
+    let(:someuser) { OpenStruct.new }
 
     before(:each) do
       allow(finder).to receive(:call).with("raw-token").and_return(someuser)

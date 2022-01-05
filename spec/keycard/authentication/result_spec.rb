@@ -17,7 +17,7 @@ RSpec.describe Keycard::Authentication::Result do
   end
 
   context "when authentication is skipped" do
-    let(:result)    { described_class.new }
+    let(:result) { described_class.new }
     let!(:finished) { result.skipped("some message") }
 
     it "logs the message" do
@@ -42,8 +42,8 @@ RSpec.describe Keycard::Authentication::Result do
   end
 
   context "when authentication succeeds" do
-    let(:account)   { double('Account') }
-    let(:result)    { described_class.new }
+    let(:account) { double("Account") }
+    let(:result) { described_class.new }
     let!(:finished) { result.succeeded(account, "some message") }
 
     it "logs the message" do
@@ -72,7 +72,7 @@ RSpec.describe Keycard::Authentication::Result do
   end
 
   context "when authentication succeeds, declaring the request CSRF-safe" do
-    let(:account) { double('Account') }
+    let(:account) { double("Account") }
     let(:result) do
       described_class.new.tap do |result|
         result.succeeded(account, "some message", csrf_safe: true)
@@ -85,7 +85,7 @@ RSpec.describe Keycard::Authentication::Result do
   end
 
   context "when authentication fails" do
-    let(:result)    { described_class.new }
+    let(:result) { described_class.new }
     let!(:finished) { result.failed("some message") }
 
     it "logs the message" do

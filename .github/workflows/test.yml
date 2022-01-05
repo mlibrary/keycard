@@ -22,6 +22,8 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
+    - name: Run linter for Ruby ${{ matrix.ruby-version }} on ${{ matrix.os }}
+      run: bin/standardrb
     - name: Run tests for Ruby ${{ matrix.ruby-version }} on ${{ matrix.os }}
       run: bin/rspec
 

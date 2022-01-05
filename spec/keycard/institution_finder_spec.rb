@@ -19,19 +19,19 @@ RSpec.describe Keycard::InstitutionFinder, DB: true do
       @unique_id += 1
       range = IPAddr.new(network).to_range
       Keycard::DB[:aa_network].insert([@unique_id, nil, network, range.first.to_i, range.last.to_i,
-                                       access.to_s, nil, inst, Time.now.utc, 'test', 'f'])
+        access.to_s, nil, inst, Time.now.utc, "test", "f"])
     end
 
     before(:each) do
-      add_inst_network(inst: 1, network: '10.0.0.0/16', access: :allow)
-      add_inst_network(inst: 1, network: '10.0.2.0/24', access: :deny)
+      add_inst_network(inst: 1, network: "10.0.0.0/16", access: :allow)
+      add_inst_network(inst: 1, network: "10.0.2.0/24", access: :deny)
 
       # range in two institutions
-      add_inst_network(inst: 2, network: '10.0.1.0/24', access: :allow)
+      add_inst_network(inst: 2, network: "10.0.1.0/24", access: :allow)
 
       # denied from one, allowed to another
-      add_inst_network(inst: 1, network: '10.0.3.0/24', access: :deny)
-      add_inst_network(inst: 2, network: '10.0.3.0/24', access: :allow)
+      add_inst_network(inst: 1, network: "10.0.3.0/24", access: :deny)
+      add_inst_network(inst: 2, network: "10.0.3.0/24", access: :allow)
     end
 
     let(:attributes) { described_class.new.attributes_for(request) }

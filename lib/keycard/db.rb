@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-require 'ostruct'
-require 'logger'
-require 'yaml'
+require "ostruct"
+require "logger"
+require "yaml"
 
 # Module for database interactions for Keycard.
 module Keycard::DB
   # Any error with the database that Keycard itself detects but cannot handle.
   class DatabaseError < StandardError; end
 
-  CONNECTION_ERROR = 'The Keycard database is not initialized. Call initialize! first.'
+  CONNECTION_ERROR = "The Keycard database is not initialized. Call initialize! first."
 
-  ALREADY_CONNECTED = 'Already connected; refusing to connect to another database.'
+  ALREADY_CONNECTED = "Already connected; refusing to connect to another database."
 
   MISSING_CONFIG = <<~MSG
     KEYCARD_DATABASE_URL and DATABASE_URL are both missing and a connection
@@ -85,7 +85,7 @@ module Keycard::DB
       return if config.readonly
 
       Sequel.extension :migration
-      Sequel::Migrator.run(db, File.join(__dir__, '../../db/migrations'), table: schema_table)
+      Sequel::Migrator.run(db, File.join(__dir__, "../../db/migrations"), table: schema_table)
     end
 
     def schema_table
@@ -93,7 +93,7 @@ module Keycard::DB
     end
 
     def schema_file
-      'db/keycard.yml'
+      "db/keycard.yml"
     end
 
     def dump_schema!
@@ -115,13 +115,13 @@ module Keycard::DB
 
     # Merge url, opts, or db settings from a hash into our config
     def merge_config!(config = {})
-      self.config.url  = config[:url]  if config.key?(:url)
+      self.config.url = config[:url] if config.key?(:url)
       self.config.opts = config[:opts] if config.key?(:opts)
-      self.config.db   = config[:db]   if config.key?(:db)
+      self.config.db = config[:db] if config.key?(:db)
     end
 
     def conn_opts
-      log = { logger: Logger.new('db/keycard.log') }
+      log = {logger: Logger.new("db/keycard.log")}
       url = config.url
       opts = config.opts
       if url
@@ -135,7 +135,7 @@ module Keycard::DB
 
     def config
       @config ||= OpenStruct.new(
-        url: ENV['KEYCARD_DATABASE_URL'] || ENV['DATABASE_URL'],
+        url: ENV["KEYCARD_DATABASE_URL"] || ENV["DATABASE_URL"],
         readonly: false
       )
     end

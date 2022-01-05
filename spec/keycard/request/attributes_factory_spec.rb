@@ -11,7 +11,7 @@ RSpec.shared_examples "attribute factory" do |mode, klass|
     end
 
     let(:factory) { described_class.new(finders: []) }
-    let(:request) { double('request') }
+    let(:request) { double("request") }
 
     it "uses #{klass}" do
       expect(klass).to receive(:new).with(request, finders: []).and_return(request).at_least(:once)
@@ -27,14 +27,14 @@ end
 module Keycard::Request
   RSpec.describe AttributesFactory do
     access = {
-      'direct' => DirectAttributes,
-      'proxy' => ProxiedAttributes,
-      'cosign' => CosignAttributes,
-      'shibboleth' => ShibbolethAttributes,
-      '(any unknown)' => DirectAttributes
+      "direct" => DirectAttributes,
+      "proxy" => ProxiedAttributes,
+      "cosign" => CosignAttributes,
+      "shibboleth" => ShibbolethAttributes,
+      "(any unknown)" => DirectAttributes
     }
     access.each do |mode, klass|
-      include_examples 'attribute factory', mode, klass
+      include_examples "attribute factory", mode, klass
     end
 
     it "can be instantiated without an explicit finder list" do

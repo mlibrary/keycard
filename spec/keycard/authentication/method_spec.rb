@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe Keycard::Authentication::Method do
-  class FakeUserModel
-    def self.finder; end
-  end
+require "support/fakes"
 
+RSpec.describe Keycard::Authentication::Method do
   it "always skips" do
     result = double("Result")
     verification = described_class.new(

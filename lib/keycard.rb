@@ -7,6 +7,7 @@ require "ostruct"
 # All of the Keycard components are contained within this top-level module.
 module Keycard
   class AuthenticationRequired < StandardError; end
+
   class AuthenticationFailed < StandardError; end
 
   def self.config

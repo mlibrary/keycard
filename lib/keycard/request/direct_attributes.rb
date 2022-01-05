@@ -6,7 +6,7 @@ module Keycard::Request
   # values into the application environment to be accessed as usual.
   class DirectAttributes < Attributes
     def user_pid
-      get 'REMOTE_USER'
+      get "REMOTE_USER"
     end
 
     def user_eid
@@ -14,7 +14,7 @@ module Keycard::Request
     end
 
     def client_ip
-      safe('REMOTE_ADDR').split(',').first
+      safe("REMOTE_ADDR").split(",").first
     end
   end
 end
