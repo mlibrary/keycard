@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ipaddr'
+require "ipaddr"
 
 # looks up institution ID(s) by IP address
 class Keycard::InstitutionFinder
@@ -36,7 +36,7 @@ class Keycard::InstitutionFinder
     insts = insts_for_ip(numeric_ip)
 
     if !insts.empty?
-      { dlpsInstitutionId: insts }
+      {dlpsInstitutionId: insts}
     else
       {}
     end

@@ -3,9 +3,9 @@
 require "bundler/setup"
 require "coveralls"
 Coveralls.wear! do
-  add_filter 'spec/sequel_helper.rb'
-  add_filter 'spec/support/migration_check.rb'
-  add_filter 'lib/keycard/railtie.rb'
+  add_filter "spec/sequel_helper.rb"
+  add_filter "spec/support/migration_check.rb"
+  add_filter "lib/keycard/railtie.rb"
 end
 
 require "keycard"

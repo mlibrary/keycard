@@ -1,28 +1,11 @@
 # frozen_string_literal: true
 
+require "support/authentication"
+
 RSpec.describe Keycard::Notary do
   subject(:notary) do
     described_class.new(attributes_factory: attributes_factory, methods: methods)
   end
-
-  class Skip < Keycard::Authentication::Method
-    def apply
-      skipped("skip!")
-    end
-  end
-
-  class Success < Keycard::Authentication::Method
-    def apply
-      succeeded(OpenStruct.new, "success!")
-    end
-  end
-
-  class Failure < Keycard::Authentication::Method
-    def apply
-      failed("failure!")
-    end
-  end
-
   def make_factory(klass)
     lambda do |attributes, session, result, **credentials|
       klass.new(
@@ -35,16 +18,16 @@ RSpec.describe Keycard::Notary do
     end
   end
 
-  let(:skip)    { make_factory(Skip) }
+  let(:skip) { make_factory(Skip) }
   let(:success) { make_factory(Success) }
   let(:failure) { make_factory(Failure) }
 
-  let(:attributes)         { double("Attributes", user_eid: "someuser", identity: { user_eid: "someuser" }) }
+  let(:attributes) { double("Attributes", user_eid: "someuser", identity: {user_eid: "someuser"}) }
   let(:attributes_factory) { double("AttributesFactory", for: attributes) }
 
   context "with one successful method" do
     let(:methods) { [success] }
-    let(:result)  { notary.authenticate(double("Request"), double("Session")) }
+    let(:result) { notary.authenticate(double("Request"), double("Session")) }
 
     it "gives an authenticated result" do
       expect(result.authenticated?).to eq true
@@ -66,7 +49,7 @@ RSpec.describe Keycard::Notary do
 
   context "with one skip followed by a successful method" do
     let(:methods) { [skip, success] }
-    let(:result)  { notary.authenticate(double("Request"), double("Session")) }
+    let(:result) { notary.authenticate(double("Request"), double("Session")) }
 
     it "gives an authenticated result" do
       expect(result.authenticated?).to eq true
@@ -79,7 +62,7 @@ RSpec.describe Keycard::Notary do
 
   context "with one skip followed by a successful and would-be failed method" do
     let(:methods) { [skip, success, failure] }
-    let(:result)  { notary.authenticate(double("Request"), double("Session")) }
+    let(:result) { notary.authenticate(double("Request"), double("Session")) }
 
     it "gives an authenticated result" do
       expect(result.authenticated?).to eq true
@@ -92,7 +75,7 @@ RSpec.describe Keycard::Notary do
 
   context "with one failed method followed by a would-be successful method" do
     let(:methods) { [failure, success] }
-    let(:result)  { notary.authenticate(double("Request"), double("Session")) }
+    let(:result) { notary.authenticate(double("Request"), double("Session")) }
 
     it "gives a failed result" do
       expect(result.failed?).to eq true
@@ -106,7 +89,7 @@ RSpec.describe Keycard::Notary do
   context "when waiving all authentication for an account" do
     let(:methods) { [failure] }
     let(:account) { double("User") }
-    let(:result)  { notary.waive(account) }
+    let(:result) { notary.waive(account) }
 
     it "gives an authenticated result" do
       expect(result.authenticated?).to eq true
@@ -120,7 +103,7 @@ RSpec.describe Keycard::Notary do
   context "when rejecting a request" do
     let(:methods) { [failure] }
     let(:account) { double("User") }
-    let(:result)  { notary.reject }
+    let(:result) { notary.reject }
 
     it "gives an unauthenticated result" do
       expect(result.authenticated?).to eq false
@@ -150,7 +133,7 @@ RSpec.describe Keycard::Notary do
         .and_return(proc {})
     end
 
-    let(:notary)  { described_class.default }
+    let(:notary) { described_class.default }
     let(:request) { double("Request", env: {}) }
 
     it "creates a Notary instance" do

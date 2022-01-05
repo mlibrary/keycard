@@ -1,26 +1,12 @@
 # frozen_string_literal: true
 
+require "support/fakes"
+
 RSpec.describe Keycard::ControllerMethods do
-  class FakeController
-    include Keycard::ControllerMethods
-
-    attr_reader :request, :notary, :session
-
-    def initialize(request, session, notary)
-      @request = request
-      @session = session
-      @notary = notary
-    end
-
-    def reset_session
-      session.clear
-    end
-  end
-
   subject(:controller) { FakeController.new(request, session, notary) }
 
   let(:request) { OpenStruct.new(env: {}) }
-  let(:session) { { timestamp: Time.now.to_i} }
+  let(:session) { {timestamp: Time.now.to_i} }
 
   before(:each) do
     allow(notary).to receive(:waive) do |account|
@@ -34,8 +20,8 @@ RSpec.describe Keycard::ControllerMethods do
 
   context "with successful authentication" do
     let(:account) { double("User", id: 1) }
-    let(:result)  { double("Result", authenticated?: true, failed?: false, account: account) }
-    let(:notary)  { double("Notary", authenticate: result) }
+    let(:result) { double("Result", authenticated?: true, failed?: false, account: account) }
+    let(:notary) { double("Notary", authenticate: result) }
 
     it "reports that the user is logged in" do
       expect(controller.logged_in?).to eq true
@@ -125,8 +111,8 @@ RSpec.describe Keycard::ControllerMethods do
 
   context "with missing authentication" do
     let(:account) { double("User", id: 1) }
-    let(:result)  { double("Result", authenticated?: false, failed?: false, account: nil) }
-    let(:notary)  { double("Notary", authenticate: result) }
+    let(:result) { double("Result", authenticated?: false, failed?: false, account: nil) }
+    let(:notary) { double("Notary", authenticate: result) }
 
     it "reports that the user is not logged in" do
       expect(controller.logged_in?).to eq false
@@ -202,7 +188,7 @@ RSpec.describe Keycard::ControllerMethods do
     let(:account) { double("User", id: 1) }
     let(:failure) { double("Result", authenticated?: false, failed?: true, account: nil) }
     let(:success) { double("Result", authenticated?: true, failed?: false, account: account) }
-    let(:notary)  { double("Notary") }
+    let(:notary) { double("Notary") }
 
     before(:each) do
       allow(notary).to receive(:authenticate) do |_request, _session, **credentials|

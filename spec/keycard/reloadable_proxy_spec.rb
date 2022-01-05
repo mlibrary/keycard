@@ -3,7 +3,7 @@
 RSpec.describe Keycard::ReloadableProxy do
   context "when the class and method are defined" do
     around(:each) do |example|
-      class DummyClass
+      class DummyClass # standard:disable Lint/ConstantDefinitionInBlock
         def self.some_method
           :result
         end
@@ -20,7 +20,7 @@ RSpec.describe Keycard::ReloadableProxy do
 
   context "when the class is reloaded" do
     around(:each) do |example|
-      class DummyClass
+      class DummyClass # standard:disable Lint/ConstantDefinitionInBlock
         def self.some_method
           raise ArgumentError, "Simulating class replacement"
         end
@@ -33,7 +33,7 @@ RSpec.describe Keycard::ReloadableProxy do
       proxy = described_class.new(:DummyClass, :some_method)
 
       Object.send(:remove_const, :DummyClass)
-      class DummyClass
+      class DummyClass # standard:disable Lint/ConstantDefinitionInBlock
         def self.some_method
           :new_result
         end

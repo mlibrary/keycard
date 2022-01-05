@@ -5,61 +5,59 @@ require "keycard/request/shibboleth_attributes"
 RSpec.describe Keycard::Request::ShibbolethAttributes do
   let(:attributes) { described_class.new(rack_request) }
   context "with headers via Shibboleth" do
-    # rubocop:disable Metrics/LineLength
     let(:rack_request) do
       double(
         :rack_request,
         env: {
-          'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => 'someuser@default.invalid',
-          'HTTP_X_SHIB_EDUPERSONSCOPEDAFFILIATION' => 'member@default.invalid;staff@default.invalid',
-          'HTTP_X_SHIB_DISPLAYNAME' => 'Aardvark Jones',
-          'HTTP_X_SHIB_MAIL' => 'someuser@mail.default.invalid',
-          'HTTP_X_SHIB_PERSISTENT_ID' => 'https://idp.default.invalid/shib/idp!https://sp.default.invalid/shib/sp!asfgkjhlk',
-          'HTTP_X_SHIB_AUTHENTICATION_METHOD' => 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
-          'HTTP_X_SHIB_AUTHNCONTEXT_CLASS' => 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
-          'HTTP_X_SHIB_IDENTITY_PROVIDER' => 'https://idp.default.invalid/shib/idp',
-          'HTTP_X_FORWARDED_FOR' => '10.0.0.1'
+          "HTTP_X_SHIB_EDUPERSONPRINCIPALNAME" => "someuser@default.invalid",
+          "HTTP_X_SHIB_EDUPERSONSCOPEDAFFILIATION" => "member@default.invalid;staff@default.invalid",
+          "HTTP_X_SHIB_DISPLAYNAME" => "Aardvark Jones",
+          "HTTP_X_SHIB_MAIL" => "someuser@mail.default.invalid",
+          "HTTP_X_SHIB_PERSISTENT_ID" => "https://idp.default.invalid/shib/idp!https://sp.default.invalid/shib/sp!asfgkjhlk",
+          "HTTP_X_SHIB_AUTHENTICATION_METHOD" => "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
+          "HTTP_X_SHIB_AUTHNCONTEXT_CLASS" => "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
+          "HTTP_X_SHIB_IDENTITY_PROVIDER" => "https://idp.default.invalid/shib/idp",
+          "HTTP_X_FORWARDED_FOR" => "10.0.0.1"
         }
       )
     end
-    # rubocop:enable Metrics/LineLength
 
     it "uses the Persistent NameID for the user_pid" do
       expect(attributes.user_pid).to eq(
-        'https://idp.default.invalid/shib/idp!https://sp.default.invalid/shib/sp!asfgkjhlk'
+        "https://idp.default.invalid/shib/idp!https://sp.default.invalid/shib/sp!asfgkjhlk"
       )
     end
 
     it "uses the eduPersonPrincipalName for the user_eid" do
-      expect(attributes.user_eid).to eq 'someuser@default.invalid'
+      expect(attributes.user_eid).to eq "someuser@default.invalid"
     end
 
     it "uses the mail for email" do
-      expect(attributes.email).to eq 'someuser@mail.default.invalid'
+      expect(attributes.email).to eq "someuser@mail.default.invalid"
     end
 
     it "uses the displayName for display_name" do
-      expect(attributes.display_name).to eq 'Aardvark Jones'
+      expect(attributes.display_name).to eq "Aardvark Jones"
     end
 
     it "uses the eduPersonScopedAffiliation for affiliation" do
-      expect(attributes.affiliation).to eq(['member@default.invalid', 'staff@default.invalid'])
+      expect(attributes.affiliation).to eq(["member@default.invalid", "staff@default.invalid"])
     end
 
     it "uses the auth context as method" do
       expect(attributes.authn_method)
-        .to eq 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport'
+        .to eq "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
     end
 
     it "uses the identity provider URL as identity_provider" do
-      expect(attributes.identity_provider).to eq 'https://idp.default.invalid/shib/idp'
+      expect(attributes.identity_provider).to eq "https://idp.default.invalid/shib/idp"
     end
 
     it "uses the forwarded for header as client_ip" do
-      expect(attributes.client_ip).to eq '10.0.0.1'
+      expect(attributes.client_ip).to eq "10.0.0.1"
     end
 
-    describe '#all' do
+    describe "#all" do
       it "includes user_pid" do
         expect(attributes[:user_pid]).not_to be_nil
       end
@@ -127,18 +125,18 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
   context "with multiple forwarded addresses" do
     let(:rack_request) do
       double(:rack_request, env: {
-               'HTTP_X_FORWARDED_FOR' => '10.0.0.2, 10.0.0.1'
-             })
+        "HTTP_X_FORWARDED_FOR" => "10.0.0.2, 10.0.0.1"
+      })
     end
 
     it "extracts the first address" do
-      expect(attributes.client_ip).to eq '10.0.0.2'
+      expect(attributes.client_ip).to eq "10.0.0.2"
     end
   end
 
   context "with a '(null)' header value" do
     let(:rack_request) do
-      double(:rack_request, env: { 'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => '(null)' })
+      double(:rack_request, env: {"HTTP_X_SHIB_EDUPERSONPRINCIPALNAME" => "(null)"})
     end
 
     it "trims the value to nil" do
@@ -148,7 +146,7 @@ RSpec.describe Keycard::Request::ShibbolethAttributes do
 
   context "with an empty string header value" do
     let(:rack_request) do
-      double(:rack_request, env: { 'HTTP_X_SHIB_EDUPERSONPRINCIPALNAME' => '' })
+      double(:rack_request, env: {"HTTP_X_SHIB_EDUPERSONPRINCIPALNAME" => ""})
     end
 
     it "trims the value to nil" do

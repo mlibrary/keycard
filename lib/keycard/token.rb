@@ -2,12 +2,12 @@
 
 # Holds utility methods for parsing tokens from header values
 class Keycard::Token
-  TOKEN_DELIMS = /\s*[:,;\t]\s*/.freeze
+  TOKEN_DELIMS = /\s*[:,;\t]\s*/
 
   class << self
     def rfc7235(string)
       string
-        .sub(/^(Bearer|Token):?/, '')
+        .sub(/^(Bearer|Token):?/, "")
         .split(TOKEN_DELIMS)
         .map { |assignment| split_assignment(assignment) }
         .to_h["token"]
@@ -19,8 +19,8 @@ class Keycard::Token
     # @return An array of pairs of key:value, both strings
     def split_assignment(string_assignment)
       clean_assignment(string_assignment)
-        .split('=')
-        .push('')
+        .split("=")
+        .push("")
         .slice(0, 2)
     end
 

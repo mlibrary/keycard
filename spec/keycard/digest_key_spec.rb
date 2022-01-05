@@ -98,6 +98,4 @@ RSpec.describe Keycard::DigestKey do
       end
     end
   end
-
 end
-

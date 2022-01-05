@@ -10,7 +10,7 @@ module Keycard::Request
   # HTTP_X_FORWARDED_FOR once the Rack request is assembled.
   class ProxiedAttributes < Attributes
     def user_pid
-      get 'HTTP_X_REMOTE_USER'
+      get "HTTP_X_REMOTE_USER"
     end
 
     def user_eid
@@ -18,7 +18,7 @@ module Keycard::Request
     end
 
     def client_ip
-      safe('HTTP_X_FORWARDED_FOR').split(',').first
+      safe("HTTP_X_FORWARDED_FOR").split(",").first
     end
   end
 end

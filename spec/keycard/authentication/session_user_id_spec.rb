@@ -6,12 +6,12 @@ RSpec.describe Keycard::Authentication::SessionUserId do
   end
 
   let(:result) { Keycard::Authentication::Result.new }
-  let(:identity)    { { user_pid: "abc123" } }
-  let(:attributes)  { double("Attributes", identity: identity) }
-  let(:finder)      { double("UserModel", call: nil) }
+  let(:identity) { {user_pid: "abc123"} }
+  let(:attributes) { double("Attributes", identity: identity) }
+  let(:finder) { double("UserModel", call: nil) }
 
   context "when the session includes a user_id the finder resolves" do
-    let(:session)  { { user_id: 1 } }
+    let(:session) { {user_id: 1} }
     let(:someuser) { OpenStruct.new }
 
     before(:each) do
@@ -53,7 +53,7 @@ RSpec.describe Keycard::Authentication::SessionUserId do
   end
 
   context "when the session includes a user_id the finder rejects" do
-    let(:session) { { user_id: -1 } }
+    let(:session) { {user_id: -1} }
 
     before(:each) do
       method.apply

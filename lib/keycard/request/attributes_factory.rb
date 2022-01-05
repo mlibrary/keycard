@@ -7,9 +7,9 @@ module Keycard::Request
   # use .for instead of naming concrete classes when processing requests.
   class AttributesFactory
     MODE_MAP = {
-      direct:     DirectAttributes,
-      proxy:      ProxiedAttributes,
-      cosign:     CosignAttributes,
+      direct: DirectAttributes,
+      proxy: ProxiedAttributes,
+      cosign: CosignAttributes,
       shibboleth: ShibbolethAttributes
     }.freeze
 

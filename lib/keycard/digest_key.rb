@@ -6,7 +6,7 @@ require "securerandom"
 # A typical digest or api key, ready to be encrypted.
 class Keycard::DigestKey
   class HiddenKeyError < StandardError; end
-  HIDDEN_KEY = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX".freeze
+  HIDDEN_KEY = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 
   # To simply mint a new key, call #new without any parameters.
   # For wrapping existing, deserialized keys, pass the digest to the constructor.
@@ -33,11 +33,7 @@ class Keycard::DigestKey
   # @raise [HiddenKeyError] This exception is raised if the unhashed key is
   #   not available.
   def value
-    if @key
-      @key
-    else
-      raise HiddenKeyError, "Cannot display hashed/hidden keys"
-    end
+    @key || raise(HiddenKeyError, "Cannot display hashed/hidden keys")
   end
 
   # The result of hashing the key
@@ -48,12 +44,10 @@ class Keycard::DigestKey
 
   def eql?(other)
     digest == if other.is_a?(self.class)
-                other.digest
-              else
-                other.to_s
-              end
+      other.digest
+    else
+      other.to_s
+    end
   end
-  alias == eql?
-
+  alias_method :==, :eql?
 end
-
