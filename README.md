@@ -47,7 +47,7 @@ associated with institutions), and the access mode (whether your application is
 served directly or behind a reverse proxy). These will be unified eventually,
 but for now, they are configured separately.
 
-## For the Database
+### For the Database
 
 For the database, there is a Railtie that, when running in a Rails app,
 attempts to use the same connection information as ActiveRecord. If you are
@@ -66,7 +66,7 @@ to pass to the Sequel connection or set `Keycard::DB.config.url` to use a
 connction string. The latter is equivalent to setting the `KEYCARD_DATABASE_URL`
 environment variable.
 
-## For the Access Mode
+### For the Access Mode
 
 To extract the username and client IP from each request, Keycard must be
 configured for an "access mode". This can be set in an initializer, under the
@@ -77,6 +77,20 @@ reverse proxy will be used.
 Under the hood, these modes amount to using either `REMOTE_USER` and
 `REMOTE_ADDR` in the environment set by the Ruby webserver for direct mode or
 the `X-Forwarded-User` and `X-Forwarded-For` headers set by a reverse proxy.
+
+## Compatibility
+
+Keycard is intended to be compatible with all community-supported Ruby branches (i.e., minor versions), currently:
+
+ - 2.6
+ - 2.7
+ - 3.0
+ - 3.1
+
+We prefer the newest syntax and linting rules that preserve compatibility with the oldest branch in normal maintenance.
+When the security maintenance for a branch expires, Keycard's compatibility should be considered unsupported.
+
+See also, [Ruby's branch maintenance policy](https://www.ruby-lang.org/en/downloads/branches/).
 
 ## License
 
