@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mlibrary/keycard.svg?branch=master)](https://travis-ci.org/mlibrary/keycard?branch=master)
+![Tests](https://github.com/mlibrary/keycard/actions/workflows/test.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/mlibrary/keycard/badge.svg?branch=master)](https://coveralls.io/github/mlibrary/keycard?branch=master)
 [![User Docs](https://img.shields.io/badge/user_docs-readthedocs-blue.svg)](https://keycard.readthedocs.io/en/latest)
 [![API Docs](https://img.shields.io/badge/API_docs-rubydoc.info-blue.svg)](https://www.rubydoc.info/gems/keycard)
